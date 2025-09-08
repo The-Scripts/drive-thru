@@ -1,34 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Canvas } from '@react-three/fiber'
+import { Physics, RigidBody } from '@react-three/rapier'
+import { Gltf, Environment, Fisheye, KeyboardControls } from '@react-three/drei'
+import Controller from 'ecctrl'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const keyboardMap = [
+    { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
+    { name: 'backward', keys: ['ArrowDown', 'KeyS'] },
+    { name: 'leftward', keys: ['ArrowLeft', 'KeyA'] },
+    { name: 'rightward', keys: ['ArrowRight', 'KeyD'] },
+    { name: 'run', keys: ['Shift'] },
+  ]
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Game Thru</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Canvas shadows onPointerDown={(e) => e.target.requestPointerLock()}>
+      <Fisheye zoom={0.4}>
+        <Environment files="/night.hdr" ground={{ scale: 100 }} />
+        <directionalLight intensity={0.7} castShadow shadow-bias={-0.0004} position={[-20, 20, 20]}>
+          <orthographicCamera attach="shadow-camera" args={[-20, 20, 20, -20]} />
+        </directionalLight>
+        <ambientLight intensity={0.2} />
+        <Physics timeStep="vary">
+          <KeyboardControls map={keyboardMap}>
+            <Controller maxVelLimit={5}>
+              <Gltf castShadow receiveShadow scale={0.115} position={[0, -0.55, 0]} src="/car.glb" />
+            </Controller>
+          </KeyboardControls>
+          <RigidBody type="fixed" colliders="trimesh">
+            <Gltf castShadow receiveShadow scale={0.11} src="/racek.glb" />
+          </RigidBody>
+        </Physics>
+      </Fisheye>
+    </Canvas>
   )
 }
 
