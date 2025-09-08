@@ -1,0 +1,15 @@
+node_modules
+Dockerfile
+dockerfiles
+.dockerignore
+docker-compose.yaml
+*.log
+.idea
+.vscode
+tmp
+var/cache
+var/log
+var/sessions
+.git
+.gitignore
+data
