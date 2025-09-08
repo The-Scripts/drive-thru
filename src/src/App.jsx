@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Physics, RigidBody } from '@react-three/rapier'
-import { Gltf, Environment, Fisheye, KeyboardControls } from '@react-three/drei'
+import { Gltf, Environment, Fisheye, KeyboardControls, Stats } from '@react-three/drei'
 import Controller from 'ecctrl'
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
 
   return (
     <Canvas shadows onPointerDown={(e) => e.target.requestPointerLock()}>
+      <Stats/>
       <Fisheye zoom={0.4}>
         <Environment files="/night.hdr" ground={{ scale: 100 }} />
         <directionalLight intensity={0.7} castShadow shadow-bias={-0.0004} position={[-20, 20, 20]}>
@@ -23,7 +24,7 @@ function App() {
         <Physics timeStep="vary">
           <KeyboardControls map={keyboardMap}>
             <Controller maxVelLimit={5}>
-              <Gltf castShadow receiveShadow scale={0.115} position={[0, -0.55, 0]} src="/car.glb" />
+              <Gltf castShadow receiveShadow scale={0.115} position={[0, -0.9, 0]} src="/car.glb" />
             </Controller>
           </KeyboardControls>
           <RigidBody type="fixed" colliders="trimesh">
