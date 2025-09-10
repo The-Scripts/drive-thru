@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useFrame } from '@react-three/fiber';
 import { useRapier } from "./RapierContext.jsx";
 
 const PhysicsWorldContext = createContext(null);

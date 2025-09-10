@@ -1,0 +1,115 @@
+import { useRapier } from "../CoreComponents/RapierContext";
+import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
+import { useEffect, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from 'three';
+
+export const Vehicle = ({ position = [0, 2, 0]}) => {
+    const RAPIER = useRapier();
+    const world = usePhysicsWorld();
+
+    const chassisRef = useRef();
+    const chassisMeshRef = useRef();
+    const wheelRefs = useRef([]);
+    const vehicleRef = useRef();
+
+    const up = new THREE.Vector3(0, 1, 0);
+    const steeringQ = new THREE.Quaternion();
+    const rotationQ = new THREE.Quaternion();
+    const chassisQ = new THREE.Quaternion();
+    const connWorld = new THREE.Vector3();
+
+    useEffect(() => {
+        if (!RAPIER || !world) return;
+
+        const chassisDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(...position);
+        const chassis = world.createRigidBody(chassisDesc);
+       
+
+        const colliderDesc = RAPIER.ColliderDesc.cuboid(1, 0.25, 2);
+        world.createCollider(colliderDesc, chassis);
+        chassisRef.current = chassis;
+
+        const vehicle = world.createVehicleController(chassis)
+        vehicleRef.current = vehicle;
+        
+
+        const wheelOffsets = [
+            {x: -1, y: -0.5, z: 1},
+            {x: 1, y: -0.5, z: 1},
+            {x: -1, y: -0.5, z: -1}, 
+            {x: 1, y: -0.5, z: -1}   
+        ];
+        const directionCs = {x: 0, y: -1, z: 0};
+        const suspensionRestLength = 0.3;
+        const radius = 0.4;
+
+
+        wheelOffsets.forEach((offset) => {
+            console.log(offset.x);
+            vehicle.addWheel(
+                offset,
+                directionCs,
+                {x: offset.x, y: 0, z: 0},
+                suspensionRestLength,
+                radius
+            );
+        });
+    }, [RAPIER, world]);
+
+    useFrame(() => {
+        const vehicle = vehicleRef.current;
+        const chassis = chassisRef.current;
+        if (!vehicle || !chassis) return;
+
+        console.log(chassis.position);
+
+        const t = chassis.translation();
+        const r = chassis.rotation();
+        if (chassisMeshRef.current) {
+            chassisMeshRef.current.position.set(t.x, t.y, t.z);
+            chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
+        }
+
+        vehicle.updateVehicle(world.timestep);
+
+        wheelRefs.current.forEach((wheelMesh, i) => {
+            if (!wheelMesh) return;
+
+            const conn = vehicle.wheelChassisConnectionPointCs(i);
+            const suspension = vehicle.wheelSuspensionLength(i);
+            const steering = vehicle.wheelSteering(i) || 0;
+            const rotation = vehicle.wheelRotation(i) || 0;
+            const axle = vehicle.wheelAxleCs(i);
+
+            chassisQ.set(r.x, r.y, r.z, r.w);
+            connWorld.set(conn.x, conn.y, conn.z);
+            connWorld.applyQuaternion(chassisQ);
+
+            wheelMesh.position.set(
+                t.x + connWorld.x,
+                t.y + connWorld.y - suspension,
+                t.z + connWorld.z
+            );
+
+            steeringQ.setFromAxisAngle(up, steering);
+            rotationQ.setFromAxisAngle(new THREE.Vector3(axle.x, axle.y, axle.z), rotation);
+            wheelMesh.quaternion.copy(steeringQ).multiply(rotationQ);
+        });
+    });
+
+    return (
+        <>
+            <mesh ref={chassisMeshRef}>
+                <boxGeometry args={[2, 0.5, 4]} />
+                <meshStandardMaterial color="blue" />
+            </mesh>
+            {[0, 1, 2, 3].map((i) => (
+                <mesh key={i} ref={(el) => (wheelRefs.current[i] = el)}>
+                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />
+                    <meshStandardMaterial color="black" />
+                </mesh>
+            ))}
+        </>
+    );
+}
