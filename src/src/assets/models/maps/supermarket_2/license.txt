@@ -1,0 +1,11 @@
+Model Information:
+* title:	supermarket 2
+* source:	https://sketchfab.com/3d-models/supermarket-2-61eac9dfc5a94bc59b3c151f9b860ff4
+* author:	amogusstrikesback2 (https://sketchfab.com/amogusstrikesback2)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "supermarket 2" (https://sketchfab.com/3d-models/supermarket-2-61eac9dfc5a94bc59b3c151f9b860ff4) by amogusstrikesback2 (https://sketchfab.com/amogusstrikesback2) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
