@@ -13,9 +13,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const wheelRefs = useRef([]);
     const vehicleRef = useRef();
 
-    const up = new THREE.Vector3(0, 1, 0);
-    const steeringQ = new THREE.Quaternion();
-    const rotationQ = new THREE.Quaternion();
     const chassisQ = new THREE.Quaternion();
     const connWorld = new THREE.Vector3();
 
@@ -78,9 +75,12 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
             const conn = vehicle.wheelChassisConnectionPointCs(i);
             const suspension = vehicle.wheelSuspensionLength(i);
-            const steering = vehicle.wheelSteering(i) || 0;
-            const rotation = vehicle.wheelRotation(i) || 0;
+            const steering = vehicle.wheelSteering(i);
+            const rotation = vehicle.wheelRotation(i);
             const axle = vehicle.wheelAxleCs(i);
+
+            console.log(axle);
+            console.log(rotation);
 
             chassisQ.set(r.x, r.y, r.z, r.w);
             connWorld.set(conn.x, conn.y, conn.z);
@@ -91,22 +91,26 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
                 t.y + connWorld.y - suspension,
                 t.z + connWorld.z
             );
+            wheelMesh.rotation.set(0, 0, (Math.PI / 2));
+            /*
+            const rotationQ = new THREE.Quaternion(axle.x, 0, 0, rotation);
+            const steeringQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), steering);
+           
+            wheelMesh.quaternion.copy(rotationQ).multiply(steeringQ);
 
-            steeringQ.setFromAxisAngle(up, steering);
-            rotationQ.setFromAxisAngle(new THREE.Vector3(axle.x, axle.y, axle.z), rotation);
-            wheelMesh.quaternion.copy(steeringQ).multiply(rotationQ);
+            console.log(wheelMesh.quaternion);*/
         });
     });
 
     return (
         <>
-            <mesh ref={chassisMeshRef}>
+            <mesh ref={chassisMeshRef} castShadow>
                 <boxGeometry args={[2, 0.5, 4]} />
                 <meshStandardMaterial color="blue" />
             </mesh>
             {[0, 1, 2, 3].map((i) => (
-                <mesh key={i} ref={(el) => (wheelRefs.current[i] = el)}>
-                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />
+                <mesh key={i} ref={(el) => (wheelRefs.current[i] = el)} castShadow>
+                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]}/>
                     <meshStandardMaterial color="black" />
                 </mesh>
             ))}

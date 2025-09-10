@@ -14,6 +14,7 @@ export const Enviroment = () => {
         <directionalLight position={[5, 10, 5]} castShadow/>
         
         <group>
+          <Vehicle />
           <Ball position={[0, 10, 0]} size={[2]} restitution={2}/>
           <Platform position={[0, -5, 0]} size={[50, 5, 50]} />
         </group>
