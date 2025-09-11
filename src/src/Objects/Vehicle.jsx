@@ -2,7 +2,7 @@ import { useRapier } from "../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls } from '@react-three/drei';
+import { useKeyboardControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
@@ -15,6 +15,8 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const backPressed = useKeyboardControls(state => state.back);
     const leftPressed = useKeyboardControls(state => state.left);
     const rightPressed = useKeyboardControls(state => state.right);
+
+    const cameraRef = useRef();
 
     const chassisRef = useRef();
     const chassisMeshRef = useRef();
@@ -117,18 +119,20 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
                 t.z + connWorld.z
             );
             wheelMesh.rotation.set(0, 0, (Math.PI / 2));
-            /*
-            const rotationQ = new THREE.Quaternion(axle.x, 0, 0, rotation);
-            const steeringQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), steering);
-           
-            wheelMesh.quaternion.copy(rotationQ).multiply(steeringQ);
-
-            console.log(wheelMesh.quaternion);*/
         });
+
+        if (cameraRef.current) {
+            const cameraOffset = new THREE.Vector3(0, 2, -7.5);
+            cameraOffset.applyQuaternion(chassisQ);
+            cameraRef.current.lookAt(t.x ,t.y, t.z);
+            cameraRef.current.position.copy(cameraOffset.add(t));
+        }
+
     });
 
     return (
         <>
+            <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 15, 0]} rotation={[50]}/>
             <mesh ref={chassisMeshRef} castShadow>
                 <boxGeometry args={[2, 0.5, 4]} />
                 <meshStandardMaterial color="blue" />
