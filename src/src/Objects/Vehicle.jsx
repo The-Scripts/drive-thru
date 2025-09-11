@@ -50,7 +50,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         const radius = 0.4;
 
 
-        wheelOffsets.forEach((offset) => {
+        wheelOffsets.forEach((offset, wheelIndex) => {
             vehicle.addWheel(
                 offset,
                 directionCs,
@@ -58,6 +58,15 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
                 suspensionRestLength,
                 radius
             );
+
+            vehicle.setWheelSuspensionStiffness(wheelIndex, defaultSettings.wheelSuspensionStiffness);
+            vehicle.setWheelSuspensionRestLength(wheelIndex, defaultSettings.wheelSuspensionRestLength);
+            vehicle.setWheelSuspensionCompression(wheelIndex, defaultSettings.wheelSuspensionCompression);
+            vehicle.setWheelSuspensionRelaxation(wheelIndex, defaultSettings.wheelSuspensionRelaxation);
+            vehicle.setWheelFrictionSlip(wheelIndex, defaultSettings.wheelFrictionSlip);
+            vehicle.setWheelSideFrictionStiffness(wheelIndex, defaultSettings.wheelSideFrictionStiffness);
+            vehicle.setWheelMaxSuspensionForce(wheelIndex, defaultSettings.wheelMaxSuspensionForce);
+            vehicle.setWheelMaxSuspensionTravel(wheelIndex, defaultSettings.wheelMaxSuspensionTravel);
         });
     }, [RAPIER, world]);
 
