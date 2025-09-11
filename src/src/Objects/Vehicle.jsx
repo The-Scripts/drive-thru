@@ -46,6 +46,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             {x: 1, y: -0.5, z: -1}   
         ];
         const directionCs = {x: 0, y: -1, z: 0};
+        const axleCs = {x: -1, y: 0, z: 0};
         const suspensionRestLength = 0.3;
         const radius = 0.4;
 
@@ -54,7 +55,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             vehicle.addWheel(
                 offset,
                 directionCs,
-                {x: offset.x, y: 0, z: 0},
+                axleCs,
                 suspensionRestLength,
                 radius
             );
