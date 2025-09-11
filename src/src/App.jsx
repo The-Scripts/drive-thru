@@ -22,11 +22,14 @@ export const Enviroment = () => {
       <PhysicsWorld>
         <Canvas shadows camera={{ position: [5, 5, 5], fov: 70}}>
           <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 10, 5]} castShadow/>
+          <directionalLight position={[5, 30, 5]} castShadow/>
           
           <group>
             <Vehicle />
-            <Ball position={[0, 10, 0]} size={[2]} restitution={2}/>
+            <Ball position={[10, 1, 10]} radius={[0.5]} color='white' restitution={0.5}/>
+            <Ball position={[10, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
+            <Ball position={[10, 1, 13]} radius={[0.5]} color='white' restitution={0.5}/>
+            <Ball position={[11.5, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
             <Platform position={[0, -5, 0]} size={[500, 5, 500]} />
           </group>
 

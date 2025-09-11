@@ -132,7 +132,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
     return (
         <>
-            <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 15, 0]} rotation={[50]}/>
+            <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 15, 0]}/>
             <mesh ref={chassisMeshRef} castShadow>
                 <boxGeometry args={[2, 0.5, 4]} />
                 <meshStandardMaterial color="blue" />
