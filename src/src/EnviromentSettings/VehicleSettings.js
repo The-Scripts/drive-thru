@@ -1,14 +1,14 @@
 export const defaultSettings = {
-    engineForce: 500,
-    brakeForce: 50,
-    steeringForce: 0.5,
+    engineForce: 5,
+    brakeForce: 2.5,
+    steeringForce: 0.2,
 
-    wheelSuspensionStiffness: 20.0,
+    wheelSuspensionStiffness: 25.0,
     wheelSuspensionRestLength: 0.3,
-    wheelSuspensionCompression: 2,
-    wheelSuspensionRelaxation: 2,
-    wheelFrictionSlip: 1.0,
-    wheelSideFrictionStiffness: 1.5,
+    wheelSuspensionCompression: 3,
+    wheelSuspensionRelaxation: 3,
+    wheelFrictionSlip: 1.5,
+    wheelSideFrictionStiffness: 2.0,
     wheelMaxSuspensionForce: 1000,
     wheelMaxSuspensionTravel: 0.5,
 }
