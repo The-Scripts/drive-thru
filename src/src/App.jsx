@@ -24,7 +24,7 @@ export const Enviroment = () => {
           <group>
             <Vehicle />
             <Ball position={[0, 10, 0]} size={[2]} restitution={2}/>
-            <Platform position={[0, -5, 0]} size={[50, 5, 50]} />
+            <Platform position={[0, -5, 0]} size={[500, 5, 500]} />
           </group>
 
           <OrbitControls />

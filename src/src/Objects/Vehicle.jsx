@@ -1,9 +1,11 @@
 import { useRapier } from "../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
+
+import { defaultSettings } from "../EnviromentSettings/VehicleSettings";
 
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();
@@ -60,8 +62,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     }, [RAPIER, world]);
 
     useFrame(() => {
-        console.log({ forwardPressed, backPressed, leftPressed, rightPressed });
-
         const vehicle = vehicleRef.current;
         const chassis = chassisRef.current;
         if (!vehicle || !chassis) return;
@@ -72,6 +72,19 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             chassisMeshRef.current.position.set(t.x, t.y, t.z);
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
+
+        const engineForce = forwardPressed ? defaultSettings.engineForce : 0;
+        const brakeForce = backPressed ? defaultSettings.brakeForce : 0;
+        const steering = leftPressed ? defaultSettings.steeringForce : rightPressed ? -defaultSettings.steeringForce : 0;
+
+        vehicle.setWheelEngineForce(2, engineForce);
+        vehicle.setWheelEngineForce(3, engineForce);
+
+        vehicle.setWheelBrake(2, brakeForce);
+        vehicle.setWheelBrake(3, brakeForce);
+
+        vehicle.setWheelSteering(0, steering);
+        vehicle.setWheelSteering(1, steering);
 
         vehicle.updateVehicle(world.timestep);
 
