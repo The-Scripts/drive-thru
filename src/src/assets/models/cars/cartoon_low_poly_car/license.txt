@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cartoon Low Poly Car
+* source:	https://sketchfab.com/3d-models/cartoon-low-poly-car-a6ec6c8cbffa45ec99fabeb5a35a9ecc
+* author:	antonmoek (https://sketchfab.com/antonmoek)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cartoon Low Poly Car" (https://sketchfab.com/3d-models/cartoon-low-poly-car-a6ec6c8cbffa45ec99fabeb5a35a9ecc) by antonmoek (https://sketchfab.com/antonmoek) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
