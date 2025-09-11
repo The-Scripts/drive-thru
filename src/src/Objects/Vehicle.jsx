@@ -1,12 +1,18 @@
 import { useRapier } from "../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
+
+    const forwardPressed = useKeyboardControls(state => state.forward);
+    const backPressed = useKeyboardControls(state => state.back);
+    const leftPressed = useKeyboardControls(state => state.left);
+    const rightPressed = useKeyboardControls(state => state.right);
 
     const chassisRef = useRef();
     const chassisMeshRef = useRef();
@@ -43,7 +49,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
 
         wheelOffsets.forEach((offset) => {
-            console.log(offset.x);
             vehicle.addWheel(
                 offset,
                 directionCs,
@@ -55,11 +60,11 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     }, [RAPIER, world]);
 
     useFrame(() => {
+        console.log({ forwardPressed, backPressed, leftPressed, rightPressed });
+
         const vehicle = vehicleRef.current;
         const chassis = chassisRef.current;
         if (!vehicle || !chassis) return;
-
-        console.log(chassis.position);
 
         const t = chassis.translation();
         const r = chassis.rotation();
@@ -78,9 +83,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             const steering = vehicle.wheelSteering(i);
             const rotation = vehicle.wheelRotation(i);
             const axle = vehicle.wheelAxleCs(i);
-
-            console.log(axle);
-            console.log(rotation);
 
             chassisQ.set(r.x, r.y, r.z, r.w);
             connWorld.set(conn.x, conn.y, conn.z);
