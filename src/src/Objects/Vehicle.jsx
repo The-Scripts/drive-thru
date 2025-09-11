@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { defaultSettings } from "../EnviromentSettings/VehicleSettings";
+import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();

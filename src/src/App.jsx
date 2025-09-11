@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, KeyboardControls } from '@react-three/drei'
 import { PhysicsWorld } from './CoreComponents/PhysicsWorldContext.jsx'
 import { PhysicsUpdater } from './CoreComponents/PhysicsUpdater.jsx'
+import { initResourceLoader } from './CoreHelpers/ResourceLoader.js'
 
 import { Platform, Ball } from './Objects/BaseObjects.jsx'
 import { Vehicle } from './Objects/Vehicle.jsx'
@@ -14,6 +15,8 @@ const controlsMap = [
 ];
 
 export const Enviroment = () => {
+  initResourceLoader();
+
   return (
     <KeyboardControls map={controlsMap}>
       <PhysicsWorld>
