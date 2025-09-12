@@ -6,6 +6,7 @@ import { initResourceLoader } from './CoreHelpers/ResourceLoader.js'
 
 import { Platform, Ball } from './Objects/BaseObjects.jsx'
 import { Vehicle } from './Objects/Vehicle.jsx'
+import { Model } from './Objects/HelperObjects/Model.jsx'
 
 const controlsMap = [
   { name: "forward", keys: ['ArrowUp', 'KeyW'] },
@@ -30,7 +31,8 @@ export const Enviroment = () => {
             <Ball position={[10, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
             <Ball position={[10, 1, 13]} radius={[0.5]} color='white' restitution={0.5}/>
             <Ball position={[11.5, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
-            <Platform position={[0, -5, 0]} size={[500, 5, 500]} />
+            <Platform position={[0, -5, 0]} size={[1500, 5, 1500]} />
+            <Model name={"supermarket02"} type={"map"} position={[0, -2.45, 0]} scale={[2,2,2]}/>
           </group>
 
           <OrbitControls />
