@@ -6,6 +6,7 @@ import { useKeyboardControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
+import { Model } from '../Objects/HelperObjects/Model';
 
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();
@@ -16,6 +17,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const leftPressed = useKeyboardControls(state => state.left);
     const rightPressed = useKeyboardControls(state => state.right);
 
+    const carModel = useRef();
     const cameraRef = useRef();
 
     const chassisRef = useRef();
@@ -139,7 +141,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         <>
             <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 15, 0]}/>
             <mesh ref={chassisMeshRef} castShadow>
-                <boxGeometry args={[2, 0.5, 4]} />
+                <Model name={"truck01"} type={"car"} ref={carModel} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]}/>
                 <meshStandardMaterial color="blue" />
             </mesh>
             {[0, 1, 2, 3].map((i) => (
