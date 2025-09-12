@@ -122,10 +122,15 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         });
 
         if (cameraRef.current) {
-            const cameraOffset = new THREE.Vector3(0, 2, -7.5);
-            cameraOffset.applyQuaternion(chassisQ);
+            const behindPos = new THREE.Vector3(0, 0, -8).applyQuaternion(chassisQ);
+            const carPos = new THREE.Vector3(t.x, 1, t.z);
+            const up = new THREE.Vector3(0, 1, 0);
+
+            const cameraOffset = behindPos.add(up);
+            const desiredPos = carPos.add(cameraOffset);
+
+            cameraRef.current.position.lerp(desiredPos, 0.1);
             cameraRef.current.lookAt(t.x ,t.y, t.z);
-            cameraRef.current.position.copy(cameraOffset.add(t));
         }
 
     });
