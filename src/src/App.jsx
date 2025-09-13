@@ -1,12 +1,13 @@
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, KeyboardControls } from '@react-three/drei'
-import { PhysicsWorld } from './CoreComponents/PhysicsWorldContext.jsx'
-import { PhysicsUpdater } from './CoreComponents/PhysicsUpdater.jsx'
-import { initResourceLoader } from './CoreHelpers/ResourceLoader.js'
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, KeyboardControls } from '@react-three/drei';
+import { PhysicsWorld } from './CoreComponents/PhysicsWorldContext.jsx';
+import { PhysicsUpdater } from './CoreComponents/PhysicsUpdater.jsx';
+import { DebugRenderer} from './CoreHelpers/DebugRenderer.jsx';
+import { initResourceLoader } from './CoreHelpers/ResourceLoader.js';
 
-import { Platform, Ball } from './Objects/BaseObjects.jsx'
-import { Vehicle } from './Objects/Vehicle.jsx'
-import { Model } from './Objects/HelperObjects/Model.jsx'
+import { Platform, Ball } from './Objects/BaseObjects.jsx';
+import { Vehicle } from './Objects/Vehicle.jsx';
+import { Model } from './Objects/HelperObjects/Model.jsx';
 
 const controlsMap = [
   { name: "forward", keys: ['ArrowUp', 'KeyW'] },
@@ -36,6 +37,7 @@ export const Enviroment = () => {
           </group>
 
           <OrbitControls />
+          <DebugRenderer disabled/> { /* remove flag to use, caution: it lags a ton.(will fix later) */ }
           <PhysicsUpdater /> {/* Don't touch */}
         </Canvas>
       </PhysicsWorld>
