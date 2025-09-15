@@ -5,6 +5,11 @@ This repository contains a Docker-based development setup for a React.js applica
 - React
 - Node.js 
 
+## 🔗 Links to documentations
+- [Rapier](https://rapier.rs/docs/)
+- [Drei](https://drei.docs.pmnd.rs/getting-started/introduction)
+- [React Three Fiber](https://r3f.docs.pmnd.rs/getting-started/introduction)
+  
 ## ⚙️ Requirements
 - [Docker](https://www.docker.com/get-started) (latest version)
 - [Docker Compose](https://docs.docker.com/compose/install/) (latest version)
