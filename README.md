@@ -18,9 +18,13 @@ cd drive-thru
 ```
 
 ### 2. Install dependencies
-```bash
+Build docker-compose: 
+```bash 
 docker-compose build
-docker-compose run --rm npm install
+```
+Install node.js: 
+```bash 
+  docker-compose run --rm npm install
 ```
 
 ### 3. Start the application
@@ -51,5 +55,13 @@ docker-compose up server
 ├── dockerfiles/          # Custom Dockerfiles (nginx, node)
 ├── nginx/                # NGINX configuration
 ├── src/                  # React.js application
+|   └── src/  
+|       └── CoreComponents/      #
+|       └── CoreHelpers/         #
+|       └── EnviromentPresets/   #
+|       └── Objects/      #
+|       └── Ui/           #
+|       └── App.jsx       # Application React file
+|       └── main.jsx      # Main React file
 └── docker-compose.yaml   # Main Docker orchestration file
 ```
