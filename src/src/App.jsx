@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, KeyboardControls } from '@react-three/drei';
+import { OrbitControls, KeyboardControls, Stats } from '@react-three/drei';
 import { PhysicsWorld } from './CoreComponents/PhysicsWorldContext.jsx';
 import { PhysicsUpdater } from './CoreComponents/PhysicsUpdater.jsx';
 import { DebugRenderer} from './CoreHelpers/DebugRenderer.jsx';
@@ -38,6 +38,7 @@ export const Enviroment = () => {
 
           <OrbitControls />
           <DebugRenderer disabled/> { /* remove flag to use, caution: it lags a ton.(will fix later) */ }
+          < Stats />
           <PhysicsUpdater /> {/* Don't touch */}
         </Canvas>
       </PhysicsWorld>
