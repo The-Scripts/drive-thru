@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, KeyboardControls, Stats } from '@react-three/drei';
+import { OrbitControls, KeyboardControls, Stats, Sky } from '@react-three/drei';
 import { PhysicsWorld } from './CoreComponents/PhysicsWorldContext.jsx';
 import { PhysicsUpdater } from './CoreComponents/PhysicsUpdater.jsx';
 import { DebugRenderer} from './CoreHelpers/DebugRenderer.jsx';
@@ -23,6 +23,7 @@ export const Enviroment = () => {
     <KeyboardControls map={controlsMap}>
       <PhysicsWorld>
         <Canvas shadows camera={{ position: [5, 5, 5], fov: 70}}>
+          <Sky sunPosition={[100, 10, 100]} distance={1000} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[5, 30, 5]} castShadow/>
           
