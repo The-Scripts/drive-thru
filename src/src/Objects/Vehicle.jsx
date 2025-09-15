@@ -31,7 +31,10 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     useEffect(() => {
         if (!RAPIER || !world) return;
 
-        const chassisDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(...position);
+        const chassisDesc = RAPIER.RigidBodyDesc
+            .dynamic()
+            .setTranslation(...position)
+            .setLinearDamping(0.5);
         const chassis = world.createRigidBody(chassisDesc);
        
 
