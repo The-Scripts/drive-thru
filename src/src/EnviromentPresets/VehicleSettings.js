@@ -1,5 +1,5 @@
 export const defaultSettings = {
-    engineForce: 5,
+    engineForce: 10,
     brakeForce: 2.5,
     steeringForce: 0.2,
 

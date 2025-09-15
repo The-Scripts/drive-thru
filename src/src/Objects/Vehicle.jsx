@@ -31,10 +31,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     useEffect(() => {
         if (!RAPIER || !world) return;
 
-        const chassisDesc = RAPIER.RigidBodyDesc
-            .dynamic()
-            .setTranslation(...position)
-            .setLinearDamping(0.5);
+        const chassisDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(...position)  
         const chassis = world.createRigidBody(chassisDesc);
        
 
@@ -78,7 +75,8 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         });
     }, [RAPIER, world]);
 
-    useFrame(() => {
+    useFrame((_state, delta, _xrFrame) => {
+        delta *= 100;
         const vehicle = vehicleRef.current;
         const chassis = chassisRef.current;
         if (!vehicle || !chassis) return;
@@ -90,9 +88,9 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
 
-        const engineForce = forwardPressed ? defaultSettings.engineForce : 0;
-        const brakeForce = backPressed ? defaultSettings.brakeForce : 0;
-        const steering = leftPressed ? defaultSettings.steeringForce : rightPressed ? -defaultSettings.steeringForce : 0;
+        const engineForce = forwardPressed ? defaultSettings.engineForce * delta : 0;
+        const brakeForce = backPressed ? defaultSettings.brakeForce * delta : 0;
+        const steering = leftPressed ? defaultSettings.steeringForce * delta : rightPressed ? -defaultSettings.steeringForce : 0;
 
         vehicle.setWheelEngineForce(2, engineForce);
         vehicle.setWheelEngineForce(3, engineForce);
@@ -103,6 +101,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         vehicle.setWheelSteering(0, steering);
         vehicle.setWheelSteering(1, steering);
 
+        console.log(vehicle.currentVehicleSpeed())
         vehicle.updateVehicle(world.timestep);
 
         wheelRefs.current.forEach((wheelMesh, i) => {
