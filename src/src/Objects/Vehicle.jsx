@@ -110,9 +110,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
             const conn = vehicle.wheelChassisConnectionPointCs(i);
             const suspension = vehicle.wheelSuspensionLength(i);
-            const steering = vehicle.wheelSteering(i);
-            const rotation = vehicle.wheelRotation(i);
-            const axle = vehicle.wheelAxleCs(i);
 
             chassisQ.set(r.x, r.y, r.z, r.w);
             connWorld.set(conn.x, conn.y, conn.z);
@@ -124,13 +121,20 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
                 t.z + connWorld.z
             );
 
-            const initial_rotation = (Math.PI / 2)
-            
-            if (i == 1 || i == 3) {
-                wheelMesh.current.rotation.set(0, initial_rotation, 0);
-            } else {
-                wheelMesh.current.rotation.set(0, -initial_rotation, 0);
-            }
+            const wheelQ = new THREE.Quaternion();
+            const steerQ = new THREE.Quaternion();
+            const spinQ = new THREE.Quaternion();
+            const initialQ = new THREE.Quaternion();
+
+            initialQ.setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
+            steerQ.setFromAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.wheelSteering(i));
+            spinQ.setFromAxisAngle(new THREE.Vector3(0, 0, 1), vehicle.wheelRotation(i));
+
+            wheelQ.copy(initialQ);
+            wheelQ.multiply(steerQ);
+            wheelQ.multiply(spinQ);
+            wheelQ.premultiply(chassisQ);
+            wheelMesh.current.quaternion.copy(wheelQ);
         });
 
         if (cameraRef.current) {
