@@ -16,6 +16,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const backPressed = useKeyboardControls(state => state.back);
     const leftPressed = useKeyboardControls(state => state.left);
     const rightPressed = useKeyboardControls(state => state.right);
+    const brakePressed = useKeyboardControls(state => state.brake)
 
     const carModel = useRef();
     const cameraRef = useRef();
@@ -88,8 +89,8 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
 
-        const engineForce = forwardPressed ? defaultSettings.engineForce * delta : 0;
-        const brakeForce = backPressed ? defaultSettings.brakeForce * delta : 0;
+        const engineForce = forwardPressed ? defaultSettings.engineForce * delta : backPressed ? -defaultSettings.engineForce : 0;
+        const brakeForce = brakePressed ? defaultSettings.brakeForce * delta : 0;
         const steering = leftPressed ? defaultSettings.steeringForce * delta : rightPressed ? -defaultSettings.steeringForce : 0;
 
         vehicle.setWheelEngineForce(2, engineForce);

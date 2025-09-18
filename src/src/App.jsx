@@ -14,6 +14,7 @@ const controlsMap = [
   { name: "back", keys: ['ArrowDown', 'KeyS'] },
   { name: "left", keys: ['ArrowLeft', 'KeyA'] },
   { name: "right", keys: ['ArrowRight', 'KeyD'] },
+  { name: "brake", keys: ['Space'] },
 ];
 
 export const Enviroment = () => {
