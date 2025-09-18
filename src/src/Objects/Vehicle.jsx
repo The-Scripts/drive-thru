@@ -23,7 +23,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
     const chassisRef = useRef();
     const chassisMeshRef = useRef();
-    const wheelRefs = useRef([]);
+    const wheelRefs = [useRef(), useRef(), useRef(), useRef()];
     const vehicleRef = useRef();
 
     const chassisQ = new THREE.Quaternion();
@@ -105,8 +105,8 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         console.log(vehicle.currentVehicleSpeed())
         vehicle.updateVehicle(world.timestep);
 
-        wheelRefs.current.forEach((wheelMesh, i) => {
-            if (!wheelMesh) return;
+        wheelRefs.forEach((wheelMesh, i) => {
+            if (!wheelMesh.current) return;
 
             const conn = vehicle.wheelChassisConnectionPointCs(i);
             const suspension = vehicle.wheelSuspensionLength(i);
@@ -118,12 +118,19 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             connWorld.set(conn.x, conn.y, conn.z);
             connWorld.applyQuaternion(chassisQ);
 
-            wheelMesh.position.set(
+            wheelMesh.current.position.set(
                 t.x + connWorld.x,
                 t.y + connWorld.y - suspension,
                 t.z + connWorld.z
             );
-            wheelMesh.rotation.set(0, 0, (Math.PI / 2));
+
+            const initial_rotation = (Math.PI / 2)
+            
+            if (i == 1 || i == 3) {
+                wheelMesh.current.rotation.set(0, initial_rotation, 0);
+            } else {
+                wheelMesh.current.rotation.set(0, -initial_rotation, 0);
+            }
         });
 
         if (cameraRef.current) {
@@ -147,12 +154,13 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
                 <Model name={"truck01"} type={"car"} ref={carModel} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]}/>
                 <meshStandardMaterial color="blue" />
             </mesh>
-            {[0, 1, 2, 3].map((i) => (
-                <mesh key={i} ref={(el) => (wheelRefs.current[i] = el)} castShadow>
-                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]}/>
-                    <meshStandardMaterial color="black" />
-                </mesh>
-            ))}
+            <group>
+                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[0]} scale={[0.015, 0.015, 0.015]}/>
+                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[1]} scale={[0.015, 0.015, 0.015]}/>
+                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[2]} scale={[0.015, 0.015, 0.015]}/>
+                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[3]} scale={[0.015, 0.015, 0.015]}/>
+            </group>
+            
         </>
     );
 }

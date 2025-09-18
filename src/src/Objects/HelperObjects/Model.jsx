@@ -1,4 +1,5 @@
 import { useResourceLoader } from "../../CoreHelpers/ResourceLoader";
+import { useMemo } from "react";
 
 export const Model = ({ name, type, ...props }, ref) => {
     const loadedModel = useResourceLoader(name, type);
@@ -7,10 +8,14 @@ export const Model = ({ name, type, ...props }, ref) => {
         return <></>
     }
 
+    const clonedModel = useMemo(() => {
+        return loadedModel.scene.clone(true);
+    }, [loadedModel]);
+
     return (
         <primitive
             ref={ref}
-            object={loadedModel.scene}
+            object={clonedModel}
             castShadow
             {...props}
         />
