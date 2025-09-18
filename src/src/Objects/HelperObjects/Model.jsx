@@ -1,23 +1,23 @@
+import { useMemo, forwardRef } from "react";
 import { useResourceLoader } from "../../CoreHelpers/ResourceLoader";
-import { useMemo } from "react";
 
-export const Model = ({ name, type, ...props }, ref) => {
+export const Model = forwardRef(({ name, type, ...props }, ref) => {
     const loadedModel = useResourceLoader(name, type);
-    if (!loadedModel) {
-        console.warn("Couldn't create a model, error: No model found. Model name: ", name, " model type: ", type);
-        return <></>
+    const scene = loadedModel?.scene;
+
+    const cloned = useMemo(() => {
+        if (!scene) return null;
+        // Deep clone to avoid reparenting the same Object3D instance across players
+        const clone = scene.clone(true);
+        return clone;
+    }, [scene]);
+
+    if (!cloned) {
+        console.warn("Couldn't create a model, error: No model found. Model name:", name, "type:", type);
+        return null;
     }
 
-    const clonedModel = useMemo(() => {
-        return loadedModel.scene.clone(true);
-    }, [loadedModel]);
-
     return (
-        <primitive
-            ref={ref}
-            object={clonedModel}
-            castShadow
-            {...props}
-        />
+        <primitive ref={ref} object={cloned} castShadow {...props} />
     );
-}
+});
