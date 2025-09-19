@@ -65,6 +65,10 @@ ioServer.on('connection', (client) => {
 
     ioServer.sockets.emit('move', clients)
 
+    // client.on('state:request', () => {
+    //     ioServer.to(client.id).emit('state', clients)
+    // })
+
     client.on('move', ({ rotation, position }) => {
         if (!clients[client.id]) {
             clients[client.id] = { position: [0, 0, 0], rotation: [0, 0, 0, 1] }

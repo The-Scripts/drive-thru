@@ -17,6 +17,8 @@ const controlsMap = [
   { name: "brake", keys: ['Space'] },
 ];
 
+import { ChatOverlay } from './ui/ChatOverlay.jsx';
+
 export const Enviroment = () => {
   initResourceLoader();
 
@@ -28,7 +30,7 @@ export const Enviroment = () => {
           camera={{ position: [5, 5, 5], fov: 70}}
           frameloop="never"
           onCreated={(state) => {
-            const FPS = 70;
+            const FPS = 40;
             const frameInterval = 1000 / FPS;
             let prev = 0;
             state.invalidate = () => {};
@@ -58,7 +60,8 @@ export const Enviroment = () => {
           < Stats />
           <PhysicsUpdater /> {/* Don't touch */}
         </Canvas>
-      </PhysicsWorld>
+        <ChatOverlay />
+        </PhysicsWorld>
     </KeyboardControls>
   )
 }
