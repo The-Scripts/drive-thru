@@ -8,13 +8,29 @@ import * as THREE from 'three';
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 import { Model } from '../Objects/HelperObjects/Model';
 
+let canRecover = true;
+
 function performRecoveryFlip(chassisRef) {
     const chassis = chassisRef.current;
-    
-    chassis.rotation = new THREE.Vector3(0, 0, 0);
+    if (!chassis || !canRecover) return;
 
-    chassis.applyImpulse({ x: 0, y: 5, z: 0 }, true);
-    //chassis.applyTorqueImpulse({ x: 0, y: 0, z: 1 }, true);
+    canRecover = false;
+
+    const r = chassis.rotation(); 
+    const q = new THREE.Quaternion(r.x, r.y, r.z, r.w);
+
+    const euler = new THREE.Euler().setFromQuaternion(q, "YXZ");
+    const yaw = euler.y;
+
+    const uprightQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0));
+
+    chassis.setRotation({ x: uprightQ.x, y: uprightQ.y, z: uprightQ.z, w: uprightQ.w });
+    chassis.applyImpulse({ x: 0, y: 20, z: 0 }, true);
+    chassis.setAngvel({ x: 0, y: 0, z: 0 }, true);
+
+    setTimeout(() => {
+        canRecover = true;
+    }, 1000);
 }
 
 export const Vehicle = ({ position = [0, 2, 0]}) => {
