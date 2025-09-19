@@ -8,6 +8,15 @@ import * as THREE from 'three';
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 import { Model } from '../Objects/HelperObjects/Model';
 
+function performRecoveryFlip(chassisRef) {
+    const chassis = chassisRef.current;
+    
+    chassis.rotation = new THREE.Vector3(0, 0, 0);
+
+    chassis.applyImpulse({ x: 0, y: 5, z: 0 }, true);
+    //chassis.applyTorqueImpulse({ x: 0, y: 0, z: 1 }, true);
+}
+
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
@@ -17,6 +26,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const leftPressed = useKeyboardControls(state => state.left);
     const rightPressed = useKeyboardControls(state => state.right);
     const brakePressed = useKeyboardControls(state => state.brake)
+    const flipPressed = useKeyboardControls(state => state.flip)
 
     const carModel = useRef();
     const cameraRef = useRef();
@@ -98,6 +108,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             engineForce = defaultSettings.engineForce * delta;
         } 
         else if (backPressed) {
+            chassis.wakeUp();
             engineForce = -defaultSettings.engineForce * delta;
         } else if (!brakePressed) {
             brakeForce = 0.02 * delta;
@@ -111,6 +122,10 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
         vehicle.setWheelSteering(0, steering);
         vehicle.setWheelSteering(1, steering);
+
+        if (flipPressed) {
+            performRecoveryFlip(chassisRef);
+        }
 
         vehicle.updateVehicle(world.timestep);
 
