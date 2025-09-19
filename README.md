@@ -65,3 +65,5 @@ docker-compose up server
 |       └── main.jsx      # Main React file
 └── docker-compose.yaml   # Main Docker orchestration file
 ```
+
+![pat](https://czechmovie.com/cdn/shop/articles/pat_a_mat_a.jpg?v=1684742662)
