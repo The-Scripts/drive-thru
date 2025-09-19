@@ -89,9 +89,19 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
 
-        const engineForce = forwardPressed ? defaultSettings.engineForce * delta : backPressed ? -defaultSettings.engineForce : 0;
-        const brakeForce = brakePressed ? defaultSettings.brakeForce * delta : 0;
+
+        let engineForce = 0;
+        let brakeForce = brakePressed ? defaultSettings.brakeForce * delta : 0;
         const steering = leftPressed ? defaultSettings.steeringForce * delta : rightPressed ? -defaultSettings.steeringForce : 0;
+
+        if (forwardPressed) {
+            engineForce = defaultSettings.engineForce * delta;
+        } 
+        else if (backPressed) {
+            engineForce = -defaultSettings.engineForce * delta;
+        } else if (!brakePressed) {
+            brakeForce = 0.02 * delta;
+        }
 
         vehicle.setWheelEngineForce(2, engineForce);
         vehicle.setWheelEngineForce(3, engineForce);
@@ -102,7 +112,6 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
         vehicle.setWheelSteering(0, steering);
         vehicle.setWheelSteering(1, steering);
 
-        console.log(vehicle.currentVehicleSpeed())
         vehicle.updateVehicle(world.timestep);
 
         wheelRefs.forEach((wheelMesh, i) => {
