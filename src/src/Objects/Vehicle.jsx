@@ -33,7 +33,7 @@ function performRecoveryFlip(chassisRef) {
     }, 1000);
 }
 
-export const Vehicle = ({ position = [0, 2, 0]}) => {
+export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
 
@@ -50,10 +50,11 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const chassisRef = useRef();
     const chassisMeshRef = useRef();
     const wheelRefs = [useRef(), useRef(), useRef(), useRef()];
-    const vehicleRef = useRef();
 
     const chassisQ = new THREE.Quaternion();
     const connWorld = new THREE.Vector3();
+    
+    const vehicleRef = ref
 
     useEffect(() => {
         if (!RAPIER || !world) return;
@@ -143,7 +144,7 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             performRecoveryFlip(chassisRef);
         }
 
-        vehicle.updateVehicle(world.timestep);
+        //vehicle.updateVehicle(world.timestep);
 
         wheelRefs.forEach((wheelMesh, i) => {
             if (!wheelMesh.current) return;

@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { usePhysicsWorld } from './PhysicsWorldContext';
 
-export const PhysicsUpdater = () => {
+export const PhysicsUpdater = ({ vehicleRef }) => {
     const world = usePhysicsWorld();
 
     let stepsPassed = 0;
@@ -15,6 +15,7 @@ export const PhysicsUpdater = () => {
 
         while (stepsPassed >= fixedTimeStep) {
             world.step();
+            vehicleRef.current.updateVehicle(fixedTimeStep);
             stepsPassed -= fixedTimeStep;
         }
     });
