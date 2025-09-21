@@ -89,4 +89,10 @@ ioServer.on('connection', (client) => {
 
         ioServer.sockets.emit('move', clients)
     })
+
+    client.on('chat:message', (msg) => {
+        console.log(`Message from ${client.id}: ${msg.text}`);
+        ioServer.emit('chat:message', msg);
+    });
+
 })

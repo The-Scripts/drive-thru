@@ -29,22 +29,21 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const chassisQ = new THREE.Quaternion();
     const connWorld = new THREE.Vector3();
 
-    // Track other players' transforms received from the server
     const [others, setOthers] = useState({})
     const [myId, setMyId] = useState(null)
     useEffect(() => {
-        const handler = (clients) => {
-            setOthers(clients)
-        }
-        onMoves(handler)
-        // Track our own socket id to avoid rendering ourselves as a remote
-        const updateId = () => setMyId(socket.id)
-        updateId()
-        socket.on('connect', updateId)
+        const handler = (clients) => setOthers(clients);
+        onMoves(handler);
+
+        const updateId = () => setMyId(socket.id);
+        updateId();
+        socket.on('connect', updateId);
+
         return () => {
-            socket.off('connect', updateId)
-        }
-    }, [])
+            socket.off('connect', updateId);
+            socket.off('move', handler);
+        };
+    }, []);
 
     useEffect(() => {
         if (!RAPIER || !world) return;

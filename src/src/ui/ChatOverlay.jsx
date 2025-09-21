@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { socket, onChatMessage, sendChatMessage } from '../CoreHelpers/socket.js';
 
 export function ChatOverlay() {
     const [open, setOpen] = useState(false);
@@ -6,56 +7,59 @@ export function ChatOverlay() {
     const [messages, setMessages] = useState([]);
     const [status, setStatus] = useState('disconnected');
     const inputRef = useRef(null);
-    const nameRef = useRef(localStorage.getItem('playerName') || `Player-${Math.floor(Math.random()*1000)}`);
-    useEffect(() => localStorage.setItem('playerName', nameRef.current), []);
+
+    useEffect(() => {
+        const handleConnect = () => setStatus('connected');
+        const handleDisconnect = () => setStatus('disconnected');
+
+        socket.on('connect', handleConnect);
+        socket.on('disconnect', handleDisconnect);
+
+        return () => {
+            socket.off('connect', handleConnect);
+            socket.off('disconnect', handleDisconnect);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleMessage = (msg) => {
+            setMessages((prev) => {
+                if (prev.find((m) => m.id === msg.id)) return prev;
+                return [...prev, msg].slice(-100);
+            });
+        };
+
+        onChatMessage(handleMessage);
+        return () => socket.off('chat:message', handleMessage);
+    }, []);
+
+    const sendMessage = () => {
+        if (!text.trim() || !socket.id) return;
+        const msg = {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+            name: socket.id,
+            text: text.trim(),
+            time: new Date().toISOString(),
+        };
+        sendChatMessage(msg);
+        setText('');
+    };
 
     useEffect(() => {
         const onKey = (e) => {
             const tag = (e.target?.tagName || '').toLowerCase();
             if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) return;
-            if (e.code === 'KeyT') {
-                setOpen((v) => !v);
-            }
+            if (e.code === 'KeyT') setOpen(v => !v);
         };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
+            window.addEventListener('keydown', onKey);
+            return () => window.removeEventListener('keydown', onKey);
     }, []);
-
-//     useEffect(() => {
-//         if (open) {
-//             setTimeout(() => inputRef.current?.focus(), 0);
-//         } else {
-//             setText('');
-//         }
-//     }, [open]);
-
-
-    const sendMessage = (raw) => {
-        const text = raw.trim();
-        if (!text) return;
-        const msg = {
-            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            name: nameRef.current,
-            text,
-            time: new Date().toISOString(),
-        };
-
-        setMessages((prev) => [...prev, msg].slice(-100));
-    };
 
     const onInputKeyDown = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        if (e.key === 'Enter') {
-            sendMessage(text);
-            setText('');
-            setOpen(false);
-            return;
-        }
-        if (e.key === 'Escape') {
-            setOpen(false);
-            return;
-        }
+        if (e.key === 'Enter') { sendMessage(); setOpen(false); return; }
+        if (e.key === 'Escape') { setOpen(false); return; }
 
         if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             const target = e.target;
@@ -64,9 +68,7 @@ export function ChatOverlay() {
             const next = text.slice(0, start) + e.key + text.slice(end);
             setText(next);
             requestAnimationFrame(() => {
-                try {
-                    target.setSelectionRange(start + 1, start + 1);
-                } catch {}
+                try { target.setSelectionRange(start + 1, start + 1); } catch {}
             });
         }
     };
@@ -84,7 +86,7 @@ export function ChatOverlay() {
             pointerEvents: 'none',
         }}>
         <div
-        class="disable-text-selection"
+        className="disable-text-selection"
         style={{
             background: 'rgba(0,0,0,0.35)',
             backdropFilter: 'blur(2px)',
@@ -94,7 +96,8 @@ export function ChatOverlay() {
             maxHeight: '32vh',
             overflowY: 'auto',
             pointerEvents: 'auto',
-        }}>
+        }}
+        >
         {messages.slice(-10).map((m) => (
             <div key={m.id} style={{ fontSize: 14, lineHeight: 1.35, marginBottom: 2 }}>
             <span style={{ color: '#a0e' }}>[{m.name}]</span> {m.text}
@@ -102,7 +105,7 @@ export function ChatOverlay() {
         ))}
         {!messages.length && (
             <div style={{ fontSize: 13, opacity: 0.8 }}>
-            Brak wiadomości. Naciśnij T, aby pisać. {status !== 'connected' ? '(offline)' : ''}
+                Brak wiadomości. Naciśnij T, aby pisać. {status !== 'connected' ? '(offline)' : ''}
             </div>
         )}
         </div>
