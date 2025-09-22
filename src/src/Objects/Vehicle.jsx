@@ -50,7 +50,7 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
 
     const chassisRef = useRef();
     const chassisMeshRef = useRef();
-    const wheelRefs = [useRef(), useRef(), useRef(), useRef()];
+    const wheelRefs = useRef([]);
 
     const chassisQ = new THREE.Quaternion();
     const connWorld = new THREE.Vector3();
@@ -160,8 +160,6 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
         if (flipPressed) {
             performRecoveryFlip(chassisRef);
         }
-
-        //vehicle.updateVehicle(world.timestep);
 
         wheelRefs.current.forEach((wheelMesh, i) => {
             if (!wheelMesh) return;

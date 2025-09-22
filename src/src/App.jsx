@@ -32,19 +32,6 @@ export const Enviroment = () => {
         <Canvas
           shadows
           camera={{ position: [5, 5, 5], fov: 70}}
-          frameloop="never"
-          onCreated={(state) => {
-            const FPS = 40;
-            const frameInterval = 1000 / FPS;
-            let prev = 0;
-            state.invalidate = () => {};
-            state.gl.setAnimationLoop((now) => {
-              if (now - prev >= frameInterval) {
-                prev = now;
-                state.advance(now);
-              }
-            });
-          }}
         >
           <Sky sunPosition={[100, 10, 100]} distance={1000} />
           <ambientLight intensity={0.5} />
