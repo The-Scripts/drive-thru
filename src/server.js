@@ -96,3 +96,5 @@ ioServer.on('connection', (client) => {
     });
 
 })
+
+export { server, ioServer }
