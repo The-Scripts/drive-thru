@@ -3,11 +3,22 @@
 This repository contains a Docker-based development setup for a React.js application. It includes services for:
 - NGINX (web server)
 - React
-- Node.js 
+- Node.js
+- npm 
 
 ## ⚙️ Requirements
 - [Docker](https://www.docker.com/get-started) (latest version)
 - [Docker Compose](https://docs.docker.com/compose/install/) (latest version)
+---
+
+## 📖 Docs
+- [Tree.js](https://threejs.org/)
+- [Rapier](https://rapier.rs/docs/)
+- [Fiber.js](https://r3f.docs.pmnd.rs/getting-started/introduction)
+- [Node](https://nodejs.org/docs/latest/api/)
+- [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
+- [Jest](https://jestjs.io/docs/getting-started)
+- [Spring Boot](https://spring.io/projects/spring-boot)
 ---
 
 ## 🚀 Quick Start
@@ -32,6 +43,10 @@ To run the application, you can choose one of the following:
 - Run only React.js app:
 ```bash
   docker-compose up react
+```
+- Run only Node.js server:
+```bash
+  docker-compose up node
 ```
 - Run both NGINX and React.js app:
 ```bash
