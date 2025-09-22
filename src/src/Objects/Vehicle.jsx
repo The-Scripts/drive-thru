@@ -9,6 +9,31 @@ import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 import { Model } from '../Objects/HelperObjects/Model';
 import { emitMove, onMoves, socket } from "../CoreHelpers/socket";
 
+let canRecover = true;
+
+function performRecoveryFlip(chassisRef) {
+    const chassis = chassisRef.current;
+    if (!chassis || !canRecover) return;
+
+    canRecover = false;
+
+    const r = chassis.rotation(); 
+    const q = new THREE.Quaternion(r.x, r.y, r.z, r.w);
+
+    const euler = new THREE.Euler().setFromQuaternion(q, "YXZ");
+    const yaw = euler.y;
+
+    const uprightQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0));
+
+    chassis.setRotation({ x: uprightQ.x, y: uprightQ.y, z: uprightQ.z, w: uprightQ.w });
+    chassis.applyImpulse({ x: 0, y: 20, z: 0 }, true);
+    chassis.setAngvel({ x: 0, y: 0, z: 0 }, true);
+
+    setTimeout(() => {
+        canRecover = true;
+    }, 1000);
+}
+
 export const Vehicle = ({ position = [0, 2, 0]}) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
@@ -17,6 +42,8 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
     const backPressed = useKeyboardControls(state => state.back);
     const leftPressed = useKeyboardControls(state => state.left);
     const rightPressed = useKeyboardControls(state => state.right);
+    const brakePressed = useKeyboardControls(state => state.brake)
+    const flipPressed = useKeyboardControls(state => state.flip)
 
     const carModel = useRef();
     const cameraRef = useRef();
@@ -105,9 +132,20 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
 
-        const engineForce = forwardPressed ? defaultSettings.engineForce * delta : 0;
-        const brakeForce = backPressed ? defaultSettings.brakeForce * delta : 0;
+
+        let engineForce = 0;
+        let brakeForce = brakePressed ? defaultSettings.brakeForce * delta : 0;
         const steering = leftPressed ? defaultSettings.steeringForce * delta : rightPressed ? -defaultSettings.steeringForce : 0;
+
+        if (forwardPressed) {
+            engineForce = defaultSettings.engineForce * delta;
+        } 
+        else if (backPressed) {
+            chassis.wakeUp();
+            engineForce = -defaultSettings.engineForce * delta;
+        } else if (!brakePressed) {
+            brakeForce = 0.02 * delta;
+        }
 
         vehicle.setWheelEngineForce(2, engineForce);
         vehicle.setWheelEngineForce(3, engineForce);
@@ -117,6 +155,10 @@ export const Vehicle = ({ position = [0, 2, 0]}) => {
 
         vehicle.setWheelSteering(0, steering);
         vehicle.setWheelSteering(1, steering);
+
+        if (flipPressed) {
+            performRecoveryFlip(chassisRef);
+        }
 
         vehicle.updateVehicle(world.timestep);
 

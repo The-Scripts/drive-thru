@@ -15,6 +15,7 @@ const controlsMap = [
   { name: "left", keys: ['ArrowLeft', 'KeyA'] },
   { name: "right", keys: ['ArrowRight', 'KeyD'] },
   { name: "brake", keys: ['Space'] },
+  { name: "flip", keys: ['KeyR'] } ,
 ];
 
 import { ChatOverlay } from './ui/ChatOverlay.jsx';
