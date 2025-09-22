@@ -1,12 +1,13 @@
 import { useRapier } from "../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 import { Model } from '../Objects/HelperObjects/Model';
+import { emitMove, onMoves, socket } from "../CoreHelpers/socket";
 
 let canRecover = true;
 
@@ -55,6 +56,22 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
     const connWorld = new THREE.Vector3();
     
     const vehicleRef = ref
+
+    const [others, setOthers] = useState({})
+    const [myId, setMyId] = useState(null)
+    useEffect(() => {
+        const handler = (clients) => setOthers(clients);
+        onMoves(handler);
+
+        const updateId = () => setMyId(socket.id);
+        updateId();
+        socket.on('connect', updateId);
+
+        return () => {
+            socket.off('connect', updateId);
+            socket.off('move', handler);
+        };
+    }, []);
 
     useEffect(() => {
         if (!RAPIER || !world) return;
@@ -146,39 +163,28 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
 
         //vehicle.updateVehicle(world.timestep);
 
-        wheelRefs.forEach((wheelMesh, i) => {
-            if (!wheelMesh.current) return;
+        wheelRefs.current.forEach((wheelMesh, i) => {
+            if (!wheelMesh) return;
 
             const conn = vehicle.wheelChassisConnectionPointCs(i);
             const suspension = vehicle.wheelSuspensionLength(i);
+            const steering = vehicle.wheelSteering(i);
+            const rotation = vehicle.wheelRotation(i);
+            const axle = vehicle.wheelAxleCs(i);
 
             chassisQ.set(r.x, r.y, r.z, r.w);
             connWorld.set(conn.x, conn.y, conn.z);
             connWorld.applyQuaternion(chassisQ);
 
-            wheelMesh.current.position.set(
+            wheelMesh.position.set(
                 t.x + connWorld.x,
                 t.y + connWorld.y - suspension,
                 t.z + connWorld.z
             );
-
-            const wheelQ = new THREE.Quaternion();
-            const steerQ = new THREE.Quaternion();
-            const spinQ = new THREE.Quaternion();
-            const initialQ = new THREE.Quaternion();
-
-            initialQ.setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
-            steerQ.setFromAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.wheelSteering(i));
-            spinQ.setFromAxisAngle(new THREE.Vector3(0, 0, 1), vehicle.wheelRotation(i));
-
-            wheelQ.copy(initialQ);
-            wheelQ.multiply(steerQ);
-            wheelQ.multiply(spinQ);
-            wheelQ.premultiply(chassisQ);
-            wheelMesh.current.quaternion.copy(wheelQ);
+            wheelMesh.rotation.set(0, 0, (Math.PI / 2));
         });
 
-        if (cameraRef.current) {
+    if (cameraRef.current) {
             const behindPos = new THREE.Vector3(0, 0, -8).applyQuaternion(chassisQ);
             const carPos = new THREE.Vector3(t.x, 1, t.z);
             const up = new THREE.Vector3(0, 1, 0);
@@ -190,6 +196,14 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
             cameraRef.current.lookAt(t.x ,t.y, t.z);
         }
 
+        // Emit our current transform to the server so others can see us
+        const clientId = 'local' // server will replace on first echo; keeping structure
+        emitMove({
+            id: clientId,
+            position: [t.x, t.y, t.z],
+            rotation: [r.x, r.y, r.z, r.w]
+        })
+
     });
 
     return (
@@ -199,13 +213,35 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
                 <Model name={"truck01"} type={"car"} ref={carModel} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]}/>
                 <meshStandardMaterial color="blue" />
             </mesh>
-            <group>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[0]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[1]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[2]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[3]} scale={[0.015, 0.015, 0.015]}/>
-            </group>
-            
+            {[0, 1, 2, 3].map((i) => (
+                <mesh key={i} ref={(el) => (wheelRefs.current[i] = el)} castShadow>
+                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]}/>
+                    <meshStandardMaterial color="black" />
+                </mesh>
+            ))}
+            {/* Render remote players as car models */}
+            {Object.entries(others)
+                .filter(([id]) => id !== myId)
+                .map(([id, value]) => {
+                    const q = new THREE.Quaternion(...(value.rotation || [0,0,0,1]))
+                    const wheelOffsets = [
+                        {x: -1, y: -0.5, z: 1},
+                        {x: 1, y: -0.5, z: 1},
+                        {x: -1, y: -0.5, z: -1},
+                        {x: 1, y: -0.5, z: -1}
+                    ]
+                    return (
+                        <group key={id} position={value.position || [0,0,0]} quaternion={q}>
+                            <Model name={"truck01"} type={"car"} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]} />
+                            {wheelOffsets.map((offset, i) => (
+                                <mesh key={i} position={[offset.x, offset.y, offset.z]} rotation={[0, 0, Math.PI / 2]} castShadow>
+                                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />
+                                    <meshStandardMaterial color="black" />
+                                </mesh>
+                            ))}
+                        </group>
+                    )
+                })}
         </>
     );
 }
