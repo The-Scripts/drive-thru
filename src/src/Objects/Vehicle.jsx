@@ -121,7 +121,6 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
     }, [RAPIER, world]);
 
     useFrame((_state, delta, _xrFrame) => {
-        delta *= 100;
         const vehicle = vehicleRef.current;
         const chassis = chassisRef.current;
         if (!vehicle || !chassis) return;
@@ -135,17 +134,17 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
 
 
         let engineForce = 0;
-        let brakeForce = brakePressed ? defaultSettings.brakeForce * delta : 0;
-        const steering = leftPressed ? defaultSettings.steeringForce * delta : rightPressed ? -defaultSettings.steeringForce : 0;
+        let brakeForce = brakePressed ? defaultSettings.brakeForce : 0;
+        const steering = leftPressed ? defaultSettings.steeringForce : rightPressed ? -defaultSettings.steeringForce : 0;
 
         if (forwardPressed) {
-            engineForce = defaultSettings.engineForce * delta;
+            engineForce = defaultSettings.engineForce;
         } 
         else if (backPressed) {
             chassis.wakeUp();
-            engineForce = -defaultSettings.engineForce * delta;
+            engineForce = -defaultSettings.engineForce;
         } else if (!brakePressed) {
-            brakeForce = 0.02 * delta;
+            brakeForce = 0.02;
         }
 
         vehicle.setWheelEngineForce(2, engineForce);
