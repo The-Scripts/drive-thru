@@ -49,10 +49,20 @@ export function ChatOverlay() {
         const onKey = (e) => {
             const tag = (e.target?.tagName || '').toLowerCase();
             if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) return;
-            if (e.code === 'KeyT') setOpen(v => !v);
+            if (e.code === 'KeyT') {
+                setOpen(v => {
+                    const next = !v;
+                    if (next) {
+                        setTimeout(() => {
+                            inputRef.current?.focus();
+                        }, 0);
+                    }
+                    return next;
+                });
+            }
         };
-            window.addEventListener('keydown', onKey);
-            return () => window.removeEventListener('keydown', onKey);
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
     }, []);
 
     const onInputKeyDown = (e) => {
@@ -61,10 +71,28 @@ export function ChatOverlay() {
         if (e.key === 'Enter') { sendMessage(); setOpen(false); return; }
         if (e.key === 'Escape') { setOpen(false); return; }
 
+        const target = e.target;
+        const start = target.selectionStart ?? text.length;
+        const end = target.selectionEnd ?? text.length;
+
+        if (e.key === 'Backspace' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            if (start === end && start > 0) {
+                const next = text.slice(0, start - 1) + text.slice(end);
+                setText(next);
+                requestAnimationFrame(() => {
+                    try { target.setSelectionRange(start - 1, start - 1); } catch {}
+                });
+            } else if (start !== end) {
+                const next = text.slice(0, start) + text.slice(end);
+                setText(next);
+                requestAnimationFrame(() => {
+                    try { target.setSelectionRange(start, start); } catch {}
+                });
+            }
+            return;
+        }
+
         if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            const target = e.target;
-            const start = target.selectionStart ?? text.length;
-            const end = target.selectionEnd ?? text.length;
             const next = text.slice(0, start) + e.key + text.slice(end);
             setText(next);
             requestAnimationFrame(() => {
