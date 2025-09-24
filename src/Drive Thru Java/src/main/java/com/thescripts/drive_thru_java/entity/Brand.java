@@ -53,13 +53,6 @@ public class Brand {
     )
     private Date updatedAt;
 
-    @OneToMany(
-            mappedBy = "brandId",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Shop> shops = new ArrayList<Shop>();
-
     public Brand(String name, String description, String imageUrl, Long id) {
         this.name = name;
         this.description = description;
