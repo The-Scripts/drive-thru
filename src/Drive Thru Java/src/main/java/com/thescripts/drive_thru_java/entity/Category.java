@@ -8,8 +8,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter

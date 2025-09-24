@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.awt.print.Book;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
