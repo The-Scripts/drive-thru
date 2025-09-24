@@ -1,6 +1,7 @@
 package com.thescripts.drive_thru_java.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "User")
 @Table(name = "users")
 public class User {
@@ -51,11 +53,4 @@ public class User {
             nullable = false
     )
     private Date updatedAt;
-
-    public User(String email, String lastName, String firstName, Long id) {
-        this.email = email;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.id = id;
-    }
 }

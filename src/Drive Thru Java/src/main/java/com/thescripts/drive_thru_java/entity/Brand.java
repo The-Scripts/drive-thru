@@ -1,6 +1,7 @@
 package com.thescripts.drive_thru_java.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "Brand")
 @Table(name = "brands")
 public class Brand {
@@ -52,11 +54,4 @@ public class Brand {
             nullable = false
     )
     private Date updatedAt;
-
-    public Brand(String name, String description, String imageUrl, Long id) {
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.id = id;
-    }
 }
