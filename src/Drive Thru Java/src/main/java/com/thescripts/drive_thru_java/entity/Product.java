@@ -38,12 +38,27 @@ public class Product {
             columnDefinition = "TEXT"
     )
     private String description;
+    @Column(
+            nullable = false
+    )
+    private Double price;
     @JoinColumn(
             name = "CATEGORY_FK",
             nullable = false
     )
     @ManyToOne()
     private Category category;
+    @JoinColumn(
+            name = "SHOP_FK"
+    )
+    @ManyToOne()
+    private Shop shop;
+    @JoinColumn(
+            name = "BRAND_FK",
+            nullable = false
+    )
+    @ManyToOne()
+    private Brand brand;
 
     @Column(
             nullable = false,
