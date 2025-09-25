@@ -14,15 +14,14 @@ function resolveSocketUrl() {
     return url.origin
   }
 
-  // Domyślnie łącz z tym samym originem (działa po LAN/Hamachi)
-  return location.origin
+  return 'http://localhost:4444'
 }
 
 const url = resolveSocketUrl()
 
 export const socket = io(url, {
   autoConnect: true,
-  // Nie wymuszaj tylko 'websocket' — pozostaw domyślne transporty dla lepszej zgodności sieciowej
+  transports: ['websocket']
 })
 
 export function onMoves(callback) {
