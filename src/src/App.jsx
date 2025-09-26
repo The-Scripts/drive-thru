@@ -9,6 +9,7 @@ import { initResourceLoader } from './CoreHelpers/ResourceLoader.js';
 import { GameMap } from './Objects/GameMap.jsx';
 import { Ball } from './Objects/BaseObjects.jsx';
 import { Vehicle } from './Objects/Vehicle.jsx';
+import { ProductSpawner } from './Objects/HelperObjects/ProductSpawner.jsx';
 
 const controlsMap = [
   { name: "forward", keys: ['ArrowUp', 'KeyW'] },
@@ -44,6 +45,8 @@ export const Enviroment = () => {
             <Ball position={[10, 1, 13]} radius={[0.5]} color='white' restitution={0.5}/>
             <Ball position={[11.5, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
             <Ball position={[3, 4, 3]} radius={[0.5]} color='white' restitution={2}/>
+
+            <ProductSpawner />
             <GameMap name={"supermarket02"} type={"map"} />
           </group>
 

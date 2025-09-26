@@ -174,17 +174,18 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
             connWorld.set(conn.x, conn.y, conn.z);
             connWorld.applyQuaternion(chassisQ);
 
-            wheelMesh.position.set(
+            wheelMesh.current.position.set(
                 t.x + connWorld.x,
                 t.y + connWorld.y - suspension,
                 t.z + connWorld.z
             );
-            wheelMesh.rotation.set(0, 0, (Math.PI / 2));
+            wheelMesh.current.rotation.set(0, 0, (Math.PI / 2));
         });
     });
 
     return (
         <>
+            < PerspectiveCamera />
             <mesh ref={chassisMeshRef} castShadow>
                 <Model name={"truck01"} type={"car"} ref={carModel} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]}/>
                 <meshStandardMaterial color="blue" />
