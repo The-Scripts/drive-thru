@@ -1,16 +1,20 @@
 import { useRapier } from "../../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../../CoreComponents/PhysicsWorldContext";
-import { useEffect } from "react";
-import React from "react";
+import { useEffect, useState } from "react";
 
-import { PiggyBank } from "../ProductObjects";
+import { ProductsConfigs } from "../../EnviromentPresets/ProductsConfig";
+import { Product } from "./Product";
 
-function spawnObject() {
-    console.log("[INFO] attempting to spawn piggyBank")
-    console.log(React.createElement(PiggyBank));
-}
+const productCongif = ProductsConfigs[0] // Placeholder
 
-export const ProductSpawner = () => {
+export const ProductSpawner = ({ position = [0, 2, 0] }) => {
+    const [spawnedProducts, setSpawnedProducts] = useState([]);
+
+    const spawnObject = () => {
+        console.log("[INFO] attempting to spawn piggyBank");
+        setSpawnedProducts([...spawnedProducts, productCongif]);
+    }
+
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
 
@@ -19,11 +23,17 @@ export const ProductSpawner = () => {
         spawnObject();
     }, [RAPIER, world]);
 
-
     return (
         <>
-            <boxGeometry />
-            <meshStandardMaterial color={"red"} />
+            <group name="Spawned Objects">
+                {spawnedProducts.map((config) => (
+                    <Product key={config.id} config={config} position={position}/>
+                ))}
+            </group>
+            <mesh position={position}>
+                <sphereGeometry args={[0.6]}/>
+                <meshStandardMaterial color={"red"} />
+            </mesh>
         </>
     )
 }

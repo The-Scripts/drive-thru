@@ -1,34 +1,37 @@
-import { useRapier } from "../CoreComponents/RapierContext.jsx";
-import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext.jsx";
+import { useRapier } from "../../CoreComponents/RapierContext";
+import { usePhysicsWorld } from "../../CoreComponents/PhysicsWorldContext";
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Model } from "./Model";
 
-import { Model } from "./HelperObjects/Model.jsx";
-
-export const PiggyBank = ({ position = [0, 0, 0], radius = [0.6], color = "blue", restitution = 0.8, friction = 0.8}) => {
+export const Product = ({ config = {}, position = [0, 0, 0] }) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
 
-    const modelRef = useRef();
     const meshRef = useRef();
     const rigidBodyRef = useRef();
 
     useEffect(() => {
         if (!RAPIER || !world) return;
 
+        if (config == {}) {
+            console.warn("[WARNING] Created a product without a config!!!");
+            return;
+        }
+
         const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(...position);
         const rigidBody = world.createRigidBody(rigidBodyDesc);
         rigidBodyRef.current = rigidBody;
 
-        const colliderDesc = RAPIER.ColliderDesc.ball(radius);
-        colliderDesc.setRestitution(restitution);
-        colliderDesc.setFriction(friction);
+        // TODO --> Add collider config
+        const colliderDesc = RAPIER.ColliderDesc.ball(config.colliderConfig.radius);
         const collider = world.createCollider(colliderDesc, rigidBody);
     }, [RAPIER, world]);
 
     useFrame(() => {
         const mesh = meshRef.current;
         const body = rigidBodyRef.current;
+
         if (mesh && body) {
             const translation = body.translation();
             const rotation = body.rotation();
@@ -39,10 +42,10 @@ export const PiggyBank = ({ position = [0, 0, 0], radius = [0.6], color = "blue"
     });
 
     return (
-        <mesh ref={meshRef} position={position} castShadow>
-            <Model type={"product"} name={"pig"} scale={[0.025, 0.025, 0.025]} position={[0.0, -0.5, 0.0]} ref={modelRef}/>
-            <sphereGeometry args={radius} />
-            <meshStandardMaterial color={color}/>
+        <mesh ref={meshRef} position={position}>
+            <Model name={config.modelConfig.name} scale={config.modelConfig.scale} type={"product"} position={config.modelConfig.offset} />
+            <sphereGeometry args={[0.6]}/>
+            <meshStandardMaterial color={"pink"} />
         </mesh>
-    )
+    );
 }
