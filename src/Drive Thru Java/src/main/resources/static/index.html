@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Drive Thru Java</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;margin:48px;color:#333}</style>
+  </head>
+  <body>
+    <h1>Drive Thru Java</h1>
+    <p>The service is operational. Available API endpoints begin with <code>/api/</code>.</p>
+    <ul>
+      <li><a href="/api/products/">/api/products/</a> — list of products</li>
+    </ul>
+    <footer><small>Started: <span id="ts"></span></small></footer>
+    <script>document.getElementById('ts').textContent=new Date().toString();</script>
+  </body>
+</html>

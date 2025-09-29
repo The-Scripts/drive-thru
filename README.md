@@ -4,6 +4,7 @@ This repository contains a Docker-based development setup for a React.js applica
 - NGINX (web server)
 - React
 - Node.js 
+- Java
 
 ## ⚙️ Requirements
 - [Docker](https://www.docker.com/get-started) (latest version)
