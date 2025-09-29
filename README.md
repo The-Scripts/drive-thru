@@ -1,16 +1,23 @@
 # Drive Thru
 
-This repository contains a Docker-based development setup for a React.js application. It includes services for:
-- NGINX (web server)
-- React
-- Node.js
-- Java
-- npm 
+## 📑 Table of Contents
+- [⚙️ Requirements](#️-requirements)
+- [📖 Docs](#-docs)
+- [🐳 Containers](#-containers)
+- [🚀 Quick Start](#-quick-start)
+  - [1. Clone the repository](#1-clone-the-repository)
+  - [2. Install dependencies](#2-install-dependencies)
+  - [3. Start the application](#3-start-the-application)
+  - [4. Access the app](#4-access-the-app)
+  - [5. Other commands](#5-other-commands)
+- [📁 Project Structure](#-project-structure)
+- [📸 Screenshots](#-screenshots)
+
+---
 
 ## ⚙️ Requirements
 - [Docker](https://www.docker.com/get-started) (latest version)
 - [Docker Compose](https://docs.docker.com/compose/install/) (latest version)
----
 
 ## 📖 Docs
 - [Tree.js](https://threejs.org/)
@@ -20,7 +27,19 @@ This repository contains a Docker-based development setup for a React.js applica
 - [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
 - [Jest](https://jestjs.io/docs/getting-started)
 - [Spring Boot](https://spring.io/projects/spring-boot)
+- [MySQL](https://dev.mysql.com/doc/)
+- [Redis](https://redis.io/docs/latest/)
 ---
+
+## 🐳 Containers
+This repository contains a Docker-based development setup for a React.js application. It includes services for:
+- NGINX (web server)
+- React
+- Node.js
+- Java
+- MySQL
+- Redis
+- npm 
 
 ## 🚀 Quick Start
 ### 1. Clone the repository
@@ -49,7 +68,11 @@ To run the application, you can choose one of the following:
 ```bash
   docker-compose up node
 ```
-- Run both NGINX and React.js app:
+- Run Java server + MySQL:
+```bash
+  docker-compose up java
+```
+- Run the entire app:
 ```bash
 docker-compose up server
 ````
@@ -58,7 +81,7 @@ docker-compose up server
 > Visit the NGINX proxy: http://localhost:8000
 ---
 
-### 4. Other commands
+### 5. Other commands
 ```bash
 > Install dependencies: docker-compose run --rm npm install {dependencies}
 > Stop containers: docker-compose stop
@@ -70,7 +93,9 @@ docker-compose up server
 .
 ├── dockerfiles/          # Custom Dockerfiles (nginx, node)
 ├── nginx/                # NGINX configuration
+├── env/                  # ENV 
 ├── src/                  # React.js application
+|   └── Drive Thru Java/  # Spring Boot Backend 
 |   └── src/  
 |       └── CoreComponents/      #
 |       └── CoreHelpers/         #
@@ -79,8 +104,10 @@ docker-compose up server
 |       └── Ui/           #
 |       └── App.jsx       # Application React file
 |       └── main.jsx      # Main React file
+|       └── server.js     #
 └── docker-compose.yaml   # Main Docker orchestration file
 ```
+## 📸 Screenshots
 <img width="1115" height="795" alt="image" src="https://github.com/user-attachments/assets/c14ebe0c-0443-417e-822c-3f79b7152f22" />
 
 ![pat](https://czechmovie.com/cdn/shop/articles/pat_a_mat_a.jpg?v=1684742662)
