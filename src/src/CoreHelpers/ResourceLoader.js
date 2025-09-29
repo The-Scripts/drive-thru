@@ -1,5 +1,5 @@
 import { useGLTF } from "@react-three/drei";
-import { cars, maps } from '../EnviromentPresets/ModelsList';
+import { cars, maps, products } from '../EnviromentPresets/ModelsList';
 
 export function initResourceLoader() {
     _preloadResources();
@@ -23,6 +23,9 @@ function _getPathFromName(name, type) {
     else if (type == "map") {
         return maps[name];
     }
+    else if (type == "product") {
+        return products[name]
+    }
 }
 
 function _preloadResources() {
@@ -37,4 +40,9 @@ function _preloadResources() {
         console.log("Preloading map assets: ", path);
         useGLTF.preload(path);
     });
+
+    Object.entries(products).forEach(([_, path]) => {
+        console.log("Preloading products assets: ", path);
+        useGLTF.preload(path);
+    })
 }

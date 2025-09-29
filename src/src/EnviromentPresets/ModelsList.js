@@ -12,3 +12,9 @@ export const maps = {
     supermarket01: "/assets/models/maps/supermarket_1/scene.gltf",
     supermarket02: "/assets/models/maps/supermarket_2/scene.gltf",
 };
+
+export const products = {
+    piwo_tesco: "/assets/models/products/piwo_tesco/scene.gltf",
+    starbucks_cup: "assets/models/products/starbucks_cup/scene.gltf",
+    pig: "assets/models/products/pig/scene.gltf",
+}
