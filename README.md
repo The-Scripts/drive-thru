@@ -80,5 +80,6 @@ docker-compose up server
 |       └── main.jsx      # Main React file
 └── docker-compose.yaml   # Main Docker orchestration file
 ```
+<img width="1115" height="795" alt="image" src="https://github.com/user-attachments/assets/c14ebe0c-0443-417e-822c-3f79b7152f22" />
 
 ![pat](https://czechmovie.com/cdn/shop/articles/pat_a_mat_a.jpg?v=1684742662)
