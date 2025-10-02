@@ -5,7 +5,8 @@ export const PhysicsUpdater = ({ vehicleRef }) => {
     const world = usePhysicsWorld();
 
     let stepsPassed = 0;
-    const fixedTimeStep = 1 / 60;
+    const fixedTimeStep = 1 / 120;
+    let timeStep = fixedTimeStep;
 
     useFrame((_, delta) => {
         if (!world) return
@@ -13,7 +14,7 @@ export const PhysicsUpdater = ({ vehicleRef }) => {
         delta = Math.min(delta, 0.05);
         stepsPassed += delta
 
-        while (stepsPassed >= fixedTimeStep) {
+        while (stepsPassed >= timeStep * delta) {
             world.step();
             vehicleRef.current.updateVehicle(fixedTimeStep);
             stepsPassed -= fixedTimeStep;
