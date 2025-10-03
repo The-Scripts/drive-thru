@@ -1,0 +1,19 @@
+### Get all products
+GET {{baseUrl}}/api/products
+Accept: {{contentType}}
+
+### Get products by brand ID
+GET {{baseUrl}}/api/products/by-brand/1
+Accept: {{contentType}}
+
+### Get products by shop ID
+GET {{baseUrl}}/api/products/by-shop/1
+Accept: {{contentType}}
+
+### Health check (Actuator)
+GET {{baseUrl}}/actuator/health
+Accept: {{contentType}}
+
+### Application info (Actuator)
+GET {{baseUrl}}/actuator/info
+Accept: {{contentType}}
