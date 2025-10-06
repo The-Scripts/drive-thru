@@ -1,15 +1,15 @@
 -- Test data for H2 database
 -- Categories
-INSERT INTO categories (id, name, description) VALUES (1, 'Beverages', 'Hot and cold drinks');
-INSERT INTO categories (id, name, description) VALUES (2, 'Food', 'Burgers, sandwiches and snacks');
+INSERT INTO categories (id, name, created_at, updated_at) VALUES (1, 'Beverages', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO categories (id, name, created_at, updated_at) VALUES (2, 'Food', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Brands
-INSERT INTO brands (id, name, description) VALUES (1, 'TestBrand1', 'Test brand 1');
-INSERT INTO brands (id, name, description) VALUES (2, 'TestBrand2', 'Test brand 2');
+INSERT INTO brands (id, name, description, image_url, created_at, updated_at) VALUES (1, 'TestBrand1', 'Test brand 1', 'https://example.com/brand1.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO brands (id, name, description, image_url, created_at, updated_at) VALUES (2, 'TestBrand2', 'Test brand 2', 'https://example.com/brand2.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Shops
-INSERT INTO shops (id, name, address) VALUES (1, 'TestShop1', 'Test Address 1');
-INSERT INTO shops (id, name, address) VALUES (2, 'TestShop2', 'Test Address 2');
+-- Shops (only has id and brand_fk columns)
+INSERT INTO shops (id, brand_fk) VALUES (1, 1);
+INSERT INTO shops (id, brand_fk) VALUES (2, 2);
 
 -- Products
 INSERT INTO products (id, name, description, price, category_fk, brand_fk, shop_fk, created_at, updated_at)
