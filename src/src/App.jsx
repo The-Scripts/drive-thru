@@ -46,12 +46,7 @@ export const Enviroment = () => {
             <Ball position={[11.5, 1, 11.5]} radius={[0.5]} color='white' restitution={0.5}/>
             <Ball position={[3, 4, 3]} radius={[0.5]} color='white' restitution={2}/>
 
-            <ProductSpawner position={[1, 2, -8]} />
-            <ProductSpawner position={[3, 2, -8]} />
-            <ProductSpawner position={[5, 2, -8]} />
-            <ProductSpawner position={[-1, 2, -8]} />
-            <ProductSpawner position={[-3, 2, -8]} />
-            <ProductSpawner position={[-5, 2, -8]} />
+            <ProductSpawner position={[0, 2, 10]} />
             <GameMap name={"supermarket02"} type={"map"} />
           </group>
 

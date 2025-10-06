@@ -80,7 +80,9 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
         const chassis = world.createRigidBody(chassisDesc);
        
 
-        const colliderDesc = RAPIER.ColliderDesc.cuboid(1, 0.25, 2);
+        const colliderDesc = RAPIER.ColliderDesc.cuboid(1, 0.25, 2)
+        .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+        colliderDesc.userData = { type: "vehicle" };
         world.createCollider(colliderDesc, chassis);
         chassisRef.current = chassis;
 

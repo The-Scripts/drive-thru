@@ -26,6 +26,7 @@ export const Product = ({ config = {}, position = [0, 0, 0] }) => {
         // TODO --> Add collider config
         const colliderDesc = RAPIER.ColliderDesc.ball(config.colliderConfig.radius);
         const collider = world.createCollider(colliderDesc, rigidBody);
+        collider.userData = { type: "product"};
     }, [RAPIER, world]);
 
     useFrame(() => {
