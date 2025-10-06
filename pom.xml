@@ -84,17 +84,19 @@
     <build>
         <sourceDirectory>${project.basedir}/src/Drive Thru Java/src/main/java</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/Drive Thru Java/src/test/java</testSourceDirectory>
+        
         <resources>
             <resource>
                 <directory>${project.basedir}/src/Drive Thru Java/src/main/resources</directory>
             </resource>
         </resources>
-        <testResources>
-            <resource>
-                <directory>${project.basedir}/src/Drive Thru Java/src/test/resources</directory>
-            </resource>
-        </testResources>
         
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/Drive Thru Java/src/test/resources</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
