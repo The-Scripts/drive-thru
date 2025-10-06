@@ -7,10 +7,12 @@ import com.thescripts.drive_thru_java.entity.Category;
 import com.thescripts.drive_thru_java.entity.User;
 import com.thescripts.drive_thru_java.repository.*;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@Profile("!integration")
 public class DataInitializer {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
