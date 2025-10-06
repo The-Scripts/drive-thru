@@ -4,9 +4,11 @@ import com.thescripts.drive_thru_java.DriveThruJavaApplication;
 import com.thescripts.drive_thru_java.entity.Brand;
 import com.thescripts.drive_thru_java.entity.Category;
 import com.thescripts.drive_thru_java.entity.Product;
+import com.thescripts.drive_thru_java.entity.Shop;
 import com.thescripts.drive_thru_java.repository.BrandRepository;
 import com.thescripts.drive_thru_java.repository.CategoryRepository;
 import com.thescripts.drive_thru_java.repository.ProductRepository;
+import com.thescripts.drive_thru_java.repository.ShopRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,9 @@ public class ProductControllerTest {
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private ShopRepository shopRepository;
+
     private void createTestProduct() {
         // Create a test category
         Category category = new Category();
@@ -66,6 +71,11 @@ public class ProductControllerTest {
         brand.setUpdatedAt(new Date(System.currentTimeMillis()));
         brand = brandRepository.save(brand);
 
+        // Create a test shop
+        Shop shop = new Shop();
+        shop.setBrandId(brand);
+        shop = shopRepository.save(shop);
+
         // Create a test product
         Product product = new Product();
         product.setName("Test Product");
@@ -73,9 +83,9 @@ public class ProductControllerTest {
         product.setPrice(29.99);
         product.setCategory(category);
         product.setBrand(brand);
+        product.setShop(shop);
         product.setCreatedAt(new Date(System.currentTimeMillis()));
         product.setUpdatedAt(new Date(System.currentTimeMillis()));
-
         productRepository.save(product);
     }
 
@@ -103,4 +113,53 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].createdAt").exists())
                 .andExpect(jsonPath("$[0].updatedAt").exists());
     }
+
+    @Test
+    @Transactional
+    public void givenProductsByBrandId_whenFindProductsByBrandId_thenReturnProductList() throws Exception {
+        createTestProduct();
+
+        mockMvc.perform(get("/api/products/by-brand/{brandId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].name").value("Test Product"))
+                .andExpect(jsonPath("$[0].description").value("This is a test product description"))
+                .andExpect(jsonPath("$[0].price").value(29.99))
+                .andExpect(jsonPath("$[0].category.id").exists())
+                .andExpect(jsonPath("$[0].category.name").value("Test Category"))
+                .andExpect(jsonPath("$[0].brand").exists())
+                .andExpect(jsonPath("$[0].brand.id").exists())
+                .andExpect(jsonPath("$[0].brand.name").value("Test Brand"))
+                .andExpect(jsonPath("$[0].brand.description").value("Test brand description"))
+                .andExpect(jsonPath("$[0].brand.imageUrl").value("https://example.com/brand-image.jpg"))
+                .andExpect(jsonPath("$[0].createdAt").exists())
+                .andExpect(jsonPath("$[0].updatedAt").exists());
+    }
+
+    @Test
+    @Transactional
+    public void givenProductsByShopId_whenFindProductsByShopId_thenReturnProductList() throws Exception {
+        createTestProduct();
+
+        mockMvc.perform(get("/api/products/by-shop/{shopId}", 1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].name").value("Test Product"))
+                .andExpect(jsonPath("$[0].description").value("This is a test product description"))
+                .andExpect(jsonPath("$[0].price").value(29.99))
+                .andExpect(jsonPath("$[0].category.id").exists())
+                .andExpect(jsonPath("$[0].category.name").value("Test Category"))
+                .andExpect(jsonPath("$[0].brand").exists())
+                .andExpect(jsonPath("$[0].brand.id").exists())
+                .andExpect(jsonPath("$[0].brand.name").value("Test Brand"))
+                .andExpect(jsonPath("$[0].brand.description").value("Test brand description"))
+                .andExpect(jsonPath("$[0].brand.imageUrl").value("https://example.com/brand-image.jpg"))
+                .andExpect(jsonPath("$[0].createdAt").exists())
+                .andExpect(jsonPath("$[0].updatedAt").exists());
+    }
+
 }
