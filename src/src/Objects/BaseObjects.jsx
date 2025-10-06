@@ -40,6 +40,7 @@ export const Ball = ({
     radius = 0.5,
     color = "blue",
     restitution = 0.8,
+    getAutoPosition,
 }) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
@@ -78,6 +79,14 @@ export const Ball = ({
     const handleClick = () => {
         setCurrentColor("green");
         setInCart(true);
+
+        if (rigidBodyRef.current && getAutoPosition) {
+            const [x, y, z] = getAutoPosition();
+            rigidBodyRef.current.setTranslation({ x, y, z }, true);
+            if (meshRef.current) {
+                meshRef.current.position.set(x, y, z);
+            }
+        }
     };
 
     return (
