@@ -1,6 +1,6 @@
 export const ProductsConfigs = [
     {
-        id: 0,
+        id: 1,
         name: "Piggy bank",
         modelConfig: {
             name: "pig",
