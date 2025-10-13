@@ -110,4 +110,6 @@ docker-compose up server
 ## 📸 Screenshots
 <img width="1115" height="795" alt="image" src="https://github.com/user-attachments/assets/c14ebe0c-0443-417e-822c-3f79b7152f22" />
 
+<img width="1711" height="797" alt="image" src="https://github.com/user-attachments/assets/87419bd1-441b-4bfd-a60f-40e340e788af" />
+
 ![pat](https://czechmovie.com/cdn/shop/articles/pat_a_mat_a.jpg?v=1684742662)
