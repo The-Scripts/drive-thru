@@ -11,6 +11,7 @@ const productCongif = ProductsConfigs[0] // Placeholder
 
 export const ProductSpawner = ({ position = [0, 2, 0] }) => {
     const [spawnedProducts, setSpawnedProducts] = useState([]);
+    const [apiProducts, setApiProducts] = useState(null);
 
     const sensorOffset = new THREE.Vector3(position[0], position[1], position[2]);
     const sensorPosition = new THREE.Vector3(0, -1.5, 0);
@@ -41,6 +42,31 @@ export const ProductSpawner = ({ position = [0, 2, 0] }) => {
             spawnObject();
     }, [RAPIER, world]);
 
+    useEffect(() => {
+        const controller = new AbortController();
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch("/api/products", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    signal: controller.signal,
+                });
+                if (!res.ok) {
+                    console.error("[ERROR] Fetch /api/products failed:", res.status, res.statusText);
+                    return;
+                }
+                const data = await res.json();
+                console.log("[INFO] /api/products response:", data);
+                setApiProducts(data);
+            } catch (err) {
+                if (err.name === "AbortError") return;
+                console.error("[ERROR] Fetch /api/products exception:", err);
+            }
+        };
+        fetchProducts();
+        return () => controller.abort();
+    }, []);
+
     return (
         <>
             <group name="Spawned Objects">
@@ -48,6 +74,10 @@ export const ProductSpawner = ({ position = [0, 2, 0] }) => {
                     <Product key={config.id} config={config} position={position}/>
                 ))}
             </group>
+            
+            {apiProducts && (
+                <primitive object={new THREE.AxesHelper(0)} />
+            )}
             {/*<mesh position={sensorOffset}>
                 <boxGeometry args={[1.5, 1.5, 1.5]} />
                 <meshStandardMaterial color={"blue"} />

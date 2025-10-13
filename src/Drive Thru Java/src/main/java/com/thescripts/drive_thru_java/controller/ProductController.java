@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://server:8000")
+@CrossOrigin(origins = {"http://react:3000"})
 public class ProductController {
     private final ProductService productService;
 
