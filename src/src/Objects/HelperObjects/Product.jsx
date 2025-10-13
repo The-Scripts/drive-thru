@@ -3,6 +3,7 @@ import { usePhysicsWorld } from "../../CoreComponents/PhysicsWorldContext";
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Model } from "./Model";
+import { COLLISION_GROUP } from "../../EnviromentPresets/CollisionLayersConfig";
 
 export const Product = ({ config = {}, position = [0, 0, 0] }) => {
     const RAPIER = useRapier();
@@ -24,7 +25,11 @@ export const Product = ({ config = {}, position = [0, 0, 0] }) => {
         rigidBodyRef.current = rigidBody;
 
         // TODO --> Add collider config
-        const colliderDesc = RAPIER.ColliderDesc.ball(config.colliderConfig.radius);
+        const colliderDesc = RAPIER.ColliderDesc.ball(config.colliderConfig.radius)
+            .setCollisionGroups(
+                (COLLISION_GROUP.SENSOR << 16) |
+                (COLLISION_GROUP.CHASSIS)
+            );
         const collider = world.createCollider(colliderDesc, rigidBody);
         collider.userData = { type: "product"};
     }, [RAPIER, world]);

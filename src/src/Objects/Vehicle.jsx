@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
 import { Model } from '../Objects/HelperObjects/Model';
 import { emitMove, onMoves, socket } from "../CoreHelpers/socket";
+import { COLLISION_GROUP } from "../EnviromentPresets/CollisionLayersConfig";
 
 let canRecover = true;
 
@@ -81,7 +82,13 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
        
 
         const colliderDesc = RAPIER.ColliderDesc.cuboid(1, 0.25, 2)
-        .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+        .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
+        .setCollisionGroups(
+            (COLLISION_GROUP.CHASSIS << 16) |
+            (COLLISION_GROUP.GROUND | COLLISION_GROUP.SENSOR)
+        );
+
+
         colliderDesc.userData = { type: "vehicle" };
         world.createCollider(colliderDesc, chassis);
         chassisRef.current = chassis;
