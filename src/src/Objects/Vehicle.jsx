@@ -1,12 +1,12 @@
 import { useRapier } from "../CoreComponents/RapierContext";
 import { usePhysicsWorld } from "../CoreComponents/PhysicsWorldContext";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls, PerspectiveCamera } from '@react-three/drei';
-import * as THREE from 'three';
+import { useKeyboardControls, PerspectiveCamera } from "@react-three/drei";
+import * as THREE from "three";
 
 import { defaultSettings } from "../EnviromentPresets/VehicleSettings";
-import { Model } from '../Objects/HelperObjects/Model';
+import { Model } from "../Objects/HelperObjects/Model";
 import { emitMove, onMoves, socket } from "../CoreHelpers/socket";
 
 let canRecover = true;
@@ -17,15 +17,22 @@ function performRecoveryFlip(chassisRef) {
 
     canRecover = false;
 
-    const r = chassis.rotation(); 
+    const r = chassis.rotation();
     const q = new THREE.Quaternion(r.x, r.y, r.z, r.w);
 
     const euler = new THREE.Euler().setFromQuaternion(q, "YXZ");
     const yaw = euler.y;
 
-    const uprightQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0));
+    const uprightQ = new THREE.Quaternion().setFromEuler(
+        new THREE.Euler(0, yaw, 0)
+    );
 
-    chassis.setRotation({ x: uprightQ.x, y: uprightQ.y, z: uprightQ.z, w: uprightQ.w });
+    chassis.setRotation({
+        x: uprightQ.x,
+        y: uprightQ.y,
+        z: uprightQ.z,
+        w: uprightQ.w,
+    });
     chassis.applyImpulse({ x: 0, y: 20, z: 0 }, true);
     chassis.setAngvel({ x: 0, y: 0, z: 0 }, true);
 
@@ -34,16 +41,16 @@ function performRecoveryFlip(chassisRef) {
     }, 1000);
 }
 
-export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
+export const Vehicle = ({ position = [0, 2, 0], ref = useRef() }) => {
     const RAPIER = useRapier();
     const world = usePhysicsWorld();
 
-    const forwardPressed = useKeyboardControls(state => state.forward);
-    const backPressed = useKeyboardControls(state => state.back);
-    const leftPressed = useKeyboardControls(state => state.left);
-    const rightPressed = useKeyboardControls(state => state.right);
-    const brakePressed = useKeyboardControls(state => state.brake)
-    const flipPressed = useKeyboardControls(state => state.flip)
+    const forwardPressed = useKeyboardControls((state) => state.forward);
+    const backPressed = useKeyboardControls((state) => state.back);
+    const leftPressed = useKeyboardControls((state) => state.left);
+    const rightPressed = useKeyboardControls((state) => state.right);
+    const brakePressed = useKeyboardControls((state) => state.brake);
+    const flipPressed = useKeyboardControls((state) => state.flip);
 
     const carModel = useRef();
     const cameraRef = useRef();
@@ -54,51 +61,55 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
 
     const chassisQ = new THREE.Quaternion();
     const connWorld = new THREE.Vector3();
-    
-    const vehicleRef = ref
 
-    const [others, setOthers] = useState({})
-    const [myId, setMyId] = useState(null)
+    const vehicleRef = useRef();
+
+    const [others, setOthers] = useState({});
+    const [myId, setMyId] = useState(null);
     useEffect(() => {
+        if (ref) {
+            ref.current = vehicleRef.current;
+        }
+
         const handler = (clients) => setOthers(clients);
         onMoves(handler);
 
         const updateId = () => setMyId(socket.id);
         updateId();
-        socket.on('connect', updateId);
+        socket.on("connect", updateId);
 
         return () => {
-            socket.off('connect', updateId);
-            socket.off('move', handler);
+            socket.off("connect", updateId);
+            socket.off("move", handler);
         };
-    }, []);
+    }, [ref]);
 
     useEffect(() => {
         if (!RAPIER || !world) return;
 
-        const chassisDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(...position)  
+        const chassisDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(
+            ...position
+        );
         const chassis = world.createRigidBody(chassisDesc);
-       
-
         const colliderDesc = RAPIER.ColliderDesc.cuboid(1, 0.25, 2);
         world.createCollider(colliderDesc, chassis);
         chassisRef.current = chassis;
 
-        const vehicle = world.createVehicleController(chassis)
+        const vehicle = world.createVehicleController(chassis);
         vehicleRef.current = vehicle;
-        
+
+        if (ref) ref.current = vehicle;
 
         const wheelOffsets = [
-            {x: -1, y: -0.5, z: 1},
-            {x: 1, y: -0.5, z: 1},
-            {x: -1, y: -0.5, z: -1}, 
-            {x: 1, y: -0.5, z: -1}   
+            { x: -1, y: -0.5, z: 1 },
+            { x: 1, y: -0.5, z: 1 },
+            { x: -1, y: -0.5, z: -1 },
+            { x: 1, y: -0.5, z: -1 },
         ];
-        const directionCs = {x: 0, y: -1, z: 0};
-        const axleCs = {x: -1, y: 0, z: 0};
+        const directionCs = { x: 0, y: -1, z: 0 };
+        const axleCs = { x: -1, y: 0, z: 0 };
         const suspensionRestLength = 0.3;
         const radius = 0.4;
-
 
         wheelOffsets.forEach((offset, wheelIndex) => {
             vehicle.addWheel(
@@ -109,14 +120,38 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
                 radius
             );
 
-            vehicle.setWheelSuspensionStiffness(wheelIndex, defaultSettings.wheelSuspensionStiffness);
-            vehicle.setWheelSuspensionRestLength(wheelIndex, defaultSettings.wheelSuspensionRestLength);
-            vehicle.setWheelSuspensionCompression(wheelIndex, defaultSettings.wheelSuspensionCompression);
-            vehicle.setWheelSuspensionRelaxation(wheelIndex, defaultSettings.wheelSuspensionRelaxation);
-            vehicle.setWheelFrictionSlip(wheelIndex, defaultSettings.wheelFrictionSlip);
-            vehicle.setWheelSideFrictionStiffness(wheelIndex, defaultSettings.wheelSideFrictionStiffness);
-            vehicle.setWheelMaxSuspensionForce(wheelIndex, defaultSettings.wheelMaxSuspensionForce);
-            vehicle.setWheelMaxSuspensionTravel(wheelIndex, defaultSettings.wheelMaxSuspensionTravel);
+            vehicle.setWheelSuspensionStiffness(
+                wheelIndex,
+                defaultSettings.wheelSuspensionStiffness
+            );
+            vehicle.setWheelSuspensionRestLength(
+                wheelIndex,
+                defaultSettings.wheelSuspensionRestLength
+            );
+            vehicle.setWheelSuspensionCompression(
+                wheelIndex,
+                defaultSettings.wheelSuspensionCompression
+            );
+            vehicle.setWheelSuspensionRelaxation(
+                wheelIndex,
+                defaultSettings.wheelSuspensionRelaxation
+            );
+            vehicle.setWheelFrictionSlip(
+                wheelIndex,
+                defaultSettings.wheelFrictionSlip
+            );
+            vehicle.setWheelSideFrictionStiffness(
+                wheelIndex,
+                defaultSettings.wheelSideFrictionStiffness
+            );
+            vehicle.setWheelMaxSuspensionForce(
+                wheelIndex,
+                defaultSettings.wheelMaxSuspensionForce
+            );
+            vehicle.setWheelMaxSuspensionTravel(
+                wheelIndex,
+                defaultSettings.wheelMaxSuspensionTravel
+            );
         });
     }, [RAPIER, world]);
 
@@ -132,15 +167,17 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
             chassisMeshRef.current.quaternion.set(r.x, r.y, r.z, r.w);
         }
 
-
         let engineForce = 0;
         let brakeForce = brakePressed ? defaultSettings.brakeForce : 0;
-        const steering = leftPressed ? defaultSettings.steeringForce : rightPressed ? -defaultSettings.steeringForce : 0;
+        const steering = leftPressed
+            ? defaultSettings.steeringForce
+            : rightPressed
+            ? -defaultSettings.steeringForce
+            : 0;
 
         if (forwardPressed) {
             engineForce = defaultSettings.engineForce;
-        } 
-        else if (backPressed) {
+        } else if (backPressed) {
             chassis.wakeUp();
             engineForce = -defaultSettings.engineForce;
         } else if (!brakePressed) {
@@ -178,15 +215,21 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
                 t.y + connWorld.y - suspension,
                 t.z + connWorld.z
             );
-            
+
             const wheelQ = new THREE.Quaternion();
             const steerQ = new THREE.Quaternion();
             const spinQ = new THREE.Quaternion();
             const initialQ = new THREE.Quaternion();
 
             initialQ.setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
-            steerQ.setFromAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.wheelSteering(i));
-            spinQ.setFromAxisAngle(new THREE.Vector3(0, 0, 1), vehicle.wheelRotation(i));
+            steerQ.setFromAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                vehicle.wheelSteering(i)
+            );
+            spinQ.setFromAxisAngle(
+                new THREE.Vector3(0, 0, 1),
+                vehicle.wheelRotation(i)
+            );
 
             wheelQ.copy(initialQ);
             wheelQ.multiply(steerQ);
@@ -195,8 +238,10 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
             wheelMesh.current.quaternion.copy(wheelQ);
         });
 
-    if (cameraRef.current) {
-            const behindPos = new THREE.Vector3(0, 0, -8).applyQuaternion(chassisQ);
+        if (cameraRef.current) {
+            const behindPos = new THREE.Vector3(0, 0, -8).applyQuaternion(
+                chassisQ
+            );
             const carPos = new THREE.Vector3(t.x, 1, t.z);
             const up = new THREE.Vector3(0, 1, 0);
 
@@ -204,55 +249,104 @@ export const Vehicle = ({ position = [0, 2, 0], ref = useRef()}) => {
             const desiredPos = carPos.add(cameraOffset);
 
             cameraRef.current.position.lerp(desiredPos, 0.1);
-            cameraRef.current.lookAt(t.x ,t.y, t.z);
+            cameraRef.current.lookAt(t.x, t.y, t.z);
         }
 
         // Emit our current transform to the server so others can see us
-        const clientId = 'local' // server will replace on first echo; keeping structure
+        const clientId = "local"; // server will replace on first echo; keeping structure
         emitMove({
             id: clientId,
             position: [t.x, t.y, t.z],
-            rotation: [r.x, r.y, r.z, r.w]
-        })
-
+            rotation: [r.x, r.y, r.z, r.w],
+        });
     });
 
     return (
         <>
-            <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 15, 0]}/>
+            <PerspectiveCamera
+                ref={cameraRef}
+                makeDefault
+                position={[0, 15, 0]}
+            />
             <mesh ref={chassisMeshRef} castShadow>
-                <Model name={"truck01"} type={"car"} ref={carModel} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]}/>
+                <Model
+                    name={"truck01"}
+                    type={"car"}
+                    ref={carModel}
+                    scale={[3, 3, 3]}
+                    rotation={[0, Math.PI, 0]}
+                    position={[0, -0.8, 0]}
+                />
                 <meshStandardMaterial color="blue" />
             </mesh>
             <group>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[0]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[1]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[2]} scale={[0.015, 0.015, 0.015]}/>
-                <Model name={"truck01"} type={"wheel"}  ref={wheelRefs[3]} scale={[0.015, 0.015, 0.015]}/>
+                <Model
+                    name={"truck01"}
+                    type={"wheel"}
+                    ref={wheelRefs[0]}
+                    scale={[0.015, 0.015, 0.015]}
+                />
+                <Model
+                    name={"truck01"}
+                    type={"wheel"}
+                    ref={wheelRefs[1]}
+                    scale={[0.015, 0.015, 0.015]}
+                />
+                <Model
+                    name={"truck01"}
+                    type={"wheel"}
+                    ref={wheelRefs[2]}
+                    scale={[0.015, 0.015, 0.015]}
+                />
+                <Model
+                    name={"truck01"}
+                    type={"wheel"}
+                    ref={wheelRefs[3]}
+                    scale={[0.015, 0.015, 0.015]}
+                />
             </group>
             {/* Render remote players as car models */}
             {Object.entries(others)
                 .filter(([id]) => id !== myId)
                 .map(([id, value]) => {
-                    const q = new THREE.Quaternion(...(value.rotation || [0,0,0,1]))
+                    const q = new THREE.Quaternion(
+                        ...(value.rotation || [0, 0, 0, 1])
+                    );
                     const wheelOffsets = [
-                        {x: -1, y: -0.5, z: 1},
-                        {x: 1, y: -0.5, z: 1},
-                        {x: -1, y: -0.5, z: -1},
-                        {x: 1, y: -0.5, z: -1}
-                    ]
+                        { x: -1, y: -0.5, z: 1 },
+                        { x: 1, y: -0.5, z: 1 },
+                        { x: -1, y: -0.5, z: -1 },
+                        { x: 1, y: -0.5, z: -1 },
+                    ];
                     return (
-                        <group key={id} position={value.position || [0,0,0]} quaternion={q}>
-                            <Model name={"truck01"} type={"car"} scale={[3, 3, 3]} rotation={[0, Math.PI, 0]} position={[0, -0.8, 0]} />
+                        <group
+                            key={id}
+                            position={value.position || [0, 0, 0]}
+                            quaternion={q}
+                        >
+                            <Model
+                                name={"truck01"}
+                                type={"car"}
+                                scale={[3, 3, 3]}
+                                rotation={[0, Math.PI, 0]}
+                                position={[0, -0.8, 0]}
+                            />
                             {wheelOffsets.map((offset, i) => (
-                                <mesh key={i} position={[offset.x, offset.y, offset.z]} rotation={[0, 0, Math.PI / 2]} castShadow>
-                                    <cylinderGeometry args={[0.4, 0.4, 0.2, 16]} />
+                                <mesh
+                                    key={i}
+                                    position={[offset.x, offset.y, offset.z]}
+                                    rotation={[0, 0, Math.PI / 2]}
+                                    castShadow
+                                >
+                                    <cylinderGeometry
+                                        args={[0.4, 0.4, 0.2, 16]}
+                                    />
                                     <meshStandardMaterial color="black" />
                                 </mesh>
                             ))}
                         </group>
-                    )
+                    );
                 })}
         </>
     );
-}
+};

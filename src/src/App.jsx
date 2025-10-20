@@ -27,11 +27,14 @@ export const Enviroment = () => {
     const vehicleRef = useRef();
 
     const getAutoPosition = () => {
-        if (vehicleRef.current?.translation) {
-            const t = vehicleRef.current.translation();
-            return [t.x, t.y + 10, t.z];
+        const chassis =
+            vehicleRef.current?.chassisRef?.current ??
+            vehicleRef.current?.chassis;
+        if (chassis && chassis.translation) {
+            const t = chassis.translation();
+            return [t.x, t.y + 2, t.z];
         }
-        return [0, 0, 0];
+        return [0, 2, -1];
     };
 
     return (
