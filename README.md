@@ -10,6 +10,7 @@
   - [3. Start the application](#3-start-the-application)
   - [4. Access the app](#4-access-the-app)
   - [5. Other commands](#5-other-commands)
+- [💭 Our Motto](#-our-motto)
 - [📁 Project Structure](#-project-structure)
 - [📸 Screenshots](#-screenshots)
 
@@ -106,7 +107,12 @@ docker-compose up server
 |       └── main.jsx      # Main React file
 |       └── server.js     #
 └── docker-compose.yaml   # Main Docker orchestration file
+
 ```
+## 💭 Our Motto
+<img width="2500" height="1080" alt="More doing than talking" src="https://github.com/user-attachments/assets/3821f825-69c7-4cfe-b1a9-d5f4455d8812" />
+
+
 ## 📸 Screenshots
 <img width="1115" height="795" alt="image" src="https://github.com/user-attachments/assets/c14ebe0c-0443-417e-822c-3f79b7152f22" />
 
