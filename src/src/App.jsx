@@ -21,6 +21,8 @@ const controlsMap = [
 ];
 
 import { ChatOverlay } from './ui/ChatOverlay.jsx';
+import {BrowserRouter, Route, Routes} from "react-router";
+import LoginPage from "./LoginPage.jsx";
 
 export const Enviroment = () => {
   initResourceLoader();
@@ -28,30 +30,38 @@ export const Enviroment = () => {
   const vehicleRef = useRef();
 
   return (
-    <KeyboardControls map={controlsMap}>
-      <PhysicsWorld>
-        <Canvas
-          shadows
-          camera={{ position: [5, 5, 5], fov: 70}}
-        >
-          <Sky sunPosition={[100, 10, 100]} distance={1000} />
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 30, 5]} castShadow/>
-          
-          <group>
-            <Vehicle ref={vehicleRef} />
+      <BrowserRouter>
+        <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path={"/"} element={
+                <KeyboardControls map={controlsMap}>
+                    <PhysicsWorld>
+                        <Canvas
+                            shadows
+                            camera={{ position: [5, 5, 5], fov: 70}}
+                        >
+                            <Sky sunPosition={[100, 10, 100]} distance={1000} />
+                            <ambientLight intensity={0.5} />
+                            <directionalLight position={[5, 30, 5]} castShadow/>
 
-            <ShopLayout />
-            <GameMap name={"supermarket02"} type={"map"} />
-          </group>
+                            <group>
+                                <Vehicle ref={vehicleRef} />
 
-          <OrbitControls />
-          <DebugRenderer disabled/> { /* remove flag to use, caution: it lags a ton.(will fix later) */ }
-          < Stats />
-          <PhysicsUpdater vehicleRef={vehicleRef}/> {/* Don't touch */}
-        </Canvas>
-        <ChatOverlay />
-        </PhysicsWorld>
-    </KeyboardControls>
+                                <ShopLayout />
+                                <GameMap name={"supermarket02"} type={"map"} />
+                            </group>
+
+                            <OrbitControls />
+                            <DebugRenderer disabled/> { /* remove flag to use, caution: it lags a ton.(will fix later) */ }
+                            < Stats />
+                            <PhysicsUpdater vehicleRef={vehicleRef}/> {/* Don't touch */}
+                        </Canvas>
+                        <ChatOverlay />
+                    </PhysicsWorld>
+                </KeyboardControls>
+            } />
+        </Routes>
+      </BrowserRouter>
+
   )
 }
