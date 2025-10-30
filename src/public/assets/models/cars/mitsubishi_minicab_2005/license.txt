@@ -1,0 +1,11 @@
+Model Information:
+* title:	Mitsubishi Minicab 2005
+* source:	https://sketchfab.com/3d-models/mitsubishi-minicab-2005-0203f5e1bda44380914a2280e4d99689
+* author:	own.guest (https://sketchfab.com/own.guest)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Mitsubishi Minicab 2005" (https://sketchfab.com/3d-models/mitsubishi-minicab-2005-0203f5e1bda44380914a2280e4d99689) by own.guest (https://sketchfab.com/own.guest) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

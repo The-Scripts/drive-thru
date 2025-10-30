@@ -1,0 +1,11 @@
+Model Information:
+* title:	Pig
+* source:	https://sketchfab.com/3d-models/pig-e845401a16ba4ba9b7ac3f2dc6237de9
+* author:	mypstom (https://sketchfab.com/mypstom)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Pig" (https://sketchfab.com/3d-models/pig-e845401a16ba4ba9b7ac3f2dc6237de9) by mypstom (https://sketchfab.com/mypstom) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
